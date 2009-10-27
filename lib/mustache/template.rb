@@ -33,6 +33,16 @@ class Mustache
         @stack = [initial]
       end
       
+      def push(hash)
+        @stack << hash
+        self
+      end
+      
+      def pop
+        @stack.pop if @stack.size > 1
+        self
+      end
+      
       def [](name)
         @stack.reverse_each do |hash|
           val = hash[name]
@@ -66,7 +76,7 @@ class Mustache
         resolve(key.to_s)
       end
     end
-    
+        
     class Var
       def initialize(arglist)
         @var = arglist
@@ -84,17 +94,42 @@ class Mustache
       end
       
       def render(context)
-        result = ""
         cond = context.evaluate(@var)
         if cond && (!cond.respond_to?(:empty?) || !cond.empty?)
-          @nodes.each do |node|
-            result << (node.respond_to?(:render) ? node.render(context) : node)
-          end
+          @nodes.render(context)
+        else
+          ""
         end 
-        result
       end
     end
     
+    class Loop
+      def initialize(data, template)
+        @var = data
+        @nodes = template.compile { |token, data| token == :endloop }
+      end
+      
+      def render(context)
+        iterable = context.resolve(@var)
+        length = 0
+
+        if iterable.respond_to?(:each)
+          length = iterable.size if iterable.respond_to?(:size)
+          length = iterable.length if iterable.respond_to?(:length)
+        end
+        
+        result = ""
+        if length > 0
+          iterable.each do |item|
+            context.push(item)
+            result << @nodes.render(context)
+            context.pop
+          end
+        end
+        result
+      end
+    end
+        
     # Expects a Balbo template as a string along with a template
     # path, which it uses to find partials.
     def initialize(source, template_path = '.', template_extension = 'balbo')
@@ -106,10 +141,22 @@ class Mustache
       @tags = {
         :text => lambda { |token, data, t| data },
         :var => lambda { |token, data, t| Var.new(data) },
-        :if => lambda { |token, data, t| If.new(data, t) }
+        :if => lambda { |token, data, t| If.new(data, t) },
+        :loop => lambda { |token, data, t| Loop.new(data, t) }
       }
     end
 
+    def nodelist(nodes)
+      def nodes.render(context)
+        result = ""
+        self.each do |node|
+          result << (node.respond_to?(:render) ? node.render(context) : node)
+        end
+        result
+      end
+      nodes
+    end
+    
     def tokens
       @tokens ||= tokenize
     end
@@ -119,24 +166,26 @@ class Mustache
       while !tokens.empty?
         token, data = tokens.shift
         
-        #nodes << @tags[token].call(token, data, self) if @tags.has_key?(token)
-        nodes << data if token == :text
-        nodes << Var.new(data) if token == :var
-        nodes << If.new(data, self) if token == :if
-        return nodes if block_given? && block.call(token, data)
+        nodes << @tags[token].call(token, data, self) if @tags.has_key?(token)
+#         nodes << data if token == :text
+#         nodes << Var.new(data) if token == :var
+#         nodes << If.new(data, self) if token == :if
+        break if block_given? && block.call(token, data)
       end
-      nodes
+      nodelist(nodes)
     end
     
     def tokenize
-      regex = / \{\{(.*?)\}\} | \{if(.*?)\} | \{\/if(.*?)\} /xim
+      regex = / \{\{(.*?)\}\} | 
+                \{(if|else|loop|extends|block})(.*?)\} | 
+                \{\/(if|loop|block)(.*?)\} /xim
       result = []
       text = @source
       while text =~ regex
         result << [:text, $`] unless $`.empty?
         result << [:var, $1.strip] if $1
-        result << [:if, $2.strip] if $2
-        result << [:endif, nil] if $3
+        result << [$2.to_sym, $3.strip] if $2
+        result << ["end#{$4}".to_sym, nil] if $4
         text = $'
       end
       result << [:text, text] if not text.empty?
@@ -144,13 +193,7 @@ class Mustache
     end
     
     def render(context={})
-      
-      result = ""
-      context = Context.new(context)
-      (@nodes ||= compile).each do |node|
-        result << (node.respond_to?(:render) ? node.render(context) : node)
-      end
-      result
+      (@nodes ||= compile).render(Context.new(context))
     end
     
     # Renders the `@source` Mustache template using the given

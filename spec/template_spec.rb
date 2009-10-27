@@ -1,18 +1,18 @@
 require File.dirname(__FILE__)+'/spec_helper'
 
 describe "Template tokenize" do
+  def t(s)
+    Mustache::Template.new(s)
+  end
+  
   {
     "Hello World" => [[:text, "Hello World"]],
     "Hello {{ name }}" => [[:text, "Hello "], [:var, "name"]],
     "{if true }yes{/if}" => [[:if, "true"], [:text, "yes"], [:endif, nil]]
   }.each do |source, tokens|
     it "tokenize: #{source}" do
-      Mustache::Template.new(source).tokenize.should == tokens
+      t(source).tokenize.should == tokens
     end
-  end
-  
-  def t(s)
-    Mustache::Template.new(s)
   end
   
   it "should render a simple template" do
@@ -33,21 +33,17 @@ describe "Template tokenize" do
   it "should output nested context vars" do
     t("{{ user.name }}").render({'user'=>{'name'=>'Joe'}}).should == "Joe"
   end
-  
-  class TestUser
-    def initialize(name); @name = name; end
-    def name; @name; end
-  end
-  
+
   it "should work with a ruby object as context" do
-    t("{{ user.name }}").render({'user'=>TestUser.new('John')}).should == "John"
+    t("{{ user.name }}").render({'user'=>Struct.new(:name).new('John')}).should == "John"
   end
     
   it "should render nested if blocks" do
     t("{if true }yes{if hey}no{/if}yes{/if}").render({'hey'=>false}).should == "yesyes"
   end
   
-#   it "should tokenize templates" do
-#     Mustache::Template.new("Hello world").tokenize.should == [[:text, "Hello world"]]
-#   end  
+  it "should render a loop" do
+    t("{loop names}<li>{{ name }}</li>{/loop}").render({
+     "names"=>[{'name'=>'John'},{'name'=>'Jane'}] }).should == "<li>John</li><li>Jane</li>"
+  end
 end
