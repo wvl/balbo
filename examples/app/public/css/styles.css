@@ -1,0 +1,58 @@
+h1, h2, h3, h4, h5, h6 {font-weight:normal;color:#000;}
+h1 {font-size:3em;line-height:1;margin-bottom:0.5em;}
+h2 {font-size:2em;margin-bottom:0.75em;}
+h3 {font-size:1.5em;line-height:1;margin-bottom:0.5em;}
+h4 {font-size:1.2em;line-height:1.25;margin-bottom:0.25em;}
+h5 {font-size:1em;font-weight:bold;margin-bottom:1.5em;}
+h6 {font-size:1em;font-weight:bold;}
+
+/* Colors: 
+http://www.genopal.com/pic2color
+#1F2525  -- near black
+#444F3C -- forest green 
+#5E7173 - bluish green
+ #778843- dark green
+ #8DB3CB - sky blue
+#8B9A4E -- light green
+#8DB3CB  -- baby blue
+
+
+*/
+.menu ul { display: block; padding: 0;  }
+.menu ul, .menu li { list-style-type: none; }
+.menu ul li { float: left; position: relative; padding: 0; color: #778843; font-weight: bold; text-transform: uppercase; }
+.menu ul li a { color: #778843; text-decoration: none; padding: 1em; }
+.menu ul li a:hover { background: #eaeddd; text-decoration: none; }
+
+#header { border-bottom: 1px solid #000; }
+#header .sitetag { text-align: right; }
+#header .sitetag a { text-decoration: none; color: inherit; }
+#header h1 { color: #778843; text-shadow: #000 2px 1px 1px; margin-bottom: 0; margin-top: 0.5em; font-size: 2em; }
+#header h3 { color: #eee; text-shadow: #000 1px 1px 1px; padding-left: 2px; }
+#header .menu { margin-top: 1.5em; }
+
+div.border { border-right: 1px solid #ccc; }
+
+.main { background-color: #fff; opacity: .8; margin-top: 1em; }
+.blurb { padding: 1em; background: url(../images/gradient.gif) top repeat-x; margin-bottom: 1em; }
+
+.sidebar { }
+.sidebar h3 { border-bottom: 1px solid #778843; text-transform: uppercase; font-size: 1em; color: #778843; }
+
+#footer { border-top: 1px solid #778843; }
+#footer .menu {  }
+#footer .siteinfo { color: #666; text-align: right; }
+#footer .siteinfo a { color: #444; }
+
+p.last { margin-bottom: 0; }
+/* forms */
+span.buttontext { margin: 0.7em 0.5em 0.7em 0px; padding: 4px 10px 4px 7px; }
+form textarea.body { width: 100%; margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; }
+fieldset { border: 0 solid #ccc;}
+form p.field { padding-bottom: 1em; }
+form .info h2 { margin-bottom: 0.2em; }
+form .info {	border-bottom:0px dotted #CCCCCC; }
+
+#rails-env { position: fixed; left: 1em; font-weight: bold; padding: .2em 0.9em; text-transform: uppercase; display: none }
+#rails-env.staging { color: #000; background: #ffff00; border: 2px solid #cccc20; border-top: none; display: block }
+#rails-env.development { color: #fff; background: #ff0000; border: 2px solid #cc2020; border-top: none; display: block }

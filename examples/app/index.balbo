@@ -1,0 +1,13 @@
+{extends layout}
+{block main}
+<div class="span-6">
+  <h1>Balbo</h1>
+  <p>Balbo was a term in common usage in the late 1930s and early 1940s, used to describe any large formation of aircraft. Balbos are named after the Italian fascist Italo Balbo who in the 1930s led a series of record-breaking flights that used large aircraft formations to promote Italian aviation.</p>
+  <h3>Alternately, <a href="http://www.beards.org/balbo.php">The Balbo:</a></h3>
+  <p>The balbo is a variation of the goatee and mustache. In this case, the goatee and mustache are not connected. The goatee is sculpted into a shape similar to an inverted letter "T". Another variation is to omit the mustache. (From <a href="http://www.bears.org">All about bears</a>)</p>
+
+</div>
+<div class="span-6 last">
+<img width="370px" style="float: right;" src="/images/italo_balbo.jpg" title="http://commons.wikimedia.org/wiki/File:Italo_Balbo.jpg"/>
+</div>
+{/block}

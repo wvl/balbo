@@ -53,7 +53,6 @@ end
 
 balbo_tmpl = Balbo::Template.load('complex_view', File.dirname(__FILE__)+'/../examples')
 balbo_tmpl.compile
-view = ComplexView.new
 
 bench 'balbo w caching' do
   balbo_tmpl.render(ComplexView.new)
