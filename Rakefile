@@ -21,15 +21,15 @@ end
 begin
   require 'jeweler'
   $LOAD_PATH.unshift 'lib'
-  require 'mustache/version'
+  require 'balbo/version'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "mustache"
-    gemspec.summary = "Mustache is a framework-agnostic way to render logic-free views."
-    gemspec.description = "Mustache is a framework-agnostic way to render logic-free views."
-    gemspec.email = "chris@ozmm.org"
-    gemspec.homepage = "http://github.com/defunkt/mustache"
-    gemspec.authors = ["Chris Wanstrath"]
-    gemspec.version = Mustache::Version
+    gemspec.name = "balbo"
+    gemspec.summary = "Balbo is a framework-agnostic way to render almost logic-free views."
+    gemspec.description = "Balbo is a framework-agnostic way to render almost logic-free views."
+    gemspec.email = "wayne@larsen.st"
+    gemspec.homepage = "http://github.com/wvl/balbo"
+    gemspec.authors = ["Wayne Larsen", "Chris Wanstrath"]
+    gemspec.version = Balbo::Version
   end
 rescue LoadError
   puts "Jeweler not available."
@@ -49,22 +49,22 @@ end
 
 desc "Push a new version to Gemcutter"
 task :publish => [ :test, :gemspec, :build ] do
-  system "git tag v#{Mustache::Version}"
-  system "git push origin v#{Mustache::Version}"
-  system "gem push pkg/mustache-#{Mustache::Version}.gem"
+  system "git tag v#{Balbo::Version}"
+  system "git push origin v#{Balbo::Version}"
+  system "gem push pkg/mustache-#{Balbo::Version}.gem"
   system "git clean -fd"
   exec "rake pages"
 end
 
 desc "Install the edge gem"
 task :install_edge => [ :dev_version, :gemspec, :build ] do
-  exec "gem install pkg/mustache-#{Mustache::Version}.gem"
+  exec "gem install pkg/mustache-#{Balbo::Version}.gem"
 end
 
 # Sets the current Mustache version to the current dev version
 task :dev_version do
-  $LOAD_PATH.unshift 'lib/mustache'
-  require 'mustache/version'
-  version = Mustache::Version + '.' + Time.now.to_i.to_s
-  Mustache.const_set(:Version, version)
+  $LOAD_PATH.unshift 'lib'
+  require 'balbo/version'
+  version = Balbo::Version + '.' + Time.now.to_i.to_s
+  Balbo.const_set(:Version, version)
 end

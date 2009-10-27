@@ -6,8 +6,16 @@ class App < Sinatra::Base
   set :public,    "#{dir}/public"
   set :static,    true
   
+  User = Struct.new(:name, :email)
+  
+  Balbo.lookup({'site'=>{'title'=>"The Balbo"}})
+  
   get '/' do
-    balbo :index, {'title'=>"The Balbo"}
+    balbo :index
+  end
+  
+  get '/profile' do
+    balbo :profile, User.new('Joe', 'joe@example.com')
   end
 end
 

@@ -71,6 +71,30 @@ require 'balbo/blocks'
 # for files containing view classes when using the `view_class` method.
 #
 module Balbo
+  # The template path informs your Mustache subclass where to look for its
+  # corresponding template. By default it's the current directory (".")
+  def self.template_path
+    @template_path ||= '.'
+  end
+
+  def self.template_path=(path)
+    @template_path = File.expand_path(path)
+    @template = nil
+  end
+  
+  # Add something to the context stack for default lookup
+  def self.lookup(contextvar)
+    lookup_stack << contextvar
+  end
+  
+  def self.lookup_stack
+    @lookup_stack ||= []
+  end
+  
+  def self.lookup_stack=(new_stack)
+    @lookup_stack = new_stack
+  end
+  
   class Mustache
     # Helper method for quickly instantiating and rendering a view.
     def self.render(*args)
@@ -87,16 +111,6 @@ module Balbo
       render(*args)
     end
 
-    # The template path informs your Mustache subclass where to look for its
-    # corresponding template. By default it's the current directory (".")
-    def self.template_path
-      @template_path ||= '.'
-    end
-
-    def self.template_path=(path)
-      @template_path = File.expand_path(path)
-      @template = nil
-    end
 
     # Alias for `template_path`
     def self.path
@@ -299,6 +313,7 @@ module Balbo
   end
 end
 
-def balbo(template, context, path='.', extension='balbo')
-  Balbo::Template.load(template, path, extension).render(context)
-end
+# def balbo(template, context, path='.', extension='balbo')
+#   puts "using balbo here?"
+#   Balbo::Template.load(template, path, extension).render(context)
+# end

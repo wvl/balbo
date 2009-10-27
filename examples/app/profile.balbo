@@ -1,0 +1,7 @@
+{extends default}
+{block main}
+<div class="span-6">
+  <h3>{{ name }}</h3>
+  <p>{{ email }}</p>
+</div>
+{/block }

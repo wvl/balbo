@@ -1,3 +1,3 @@
-class Mustache
-  Version = '0.4.0'
+module Balbo
+  Version = '0.5.0'
 end

@@ -13,7 +13,7 @@ module Balbo
   # executed within. All Mustache tags reference keys in the Context.
   class Context
     def initialize(initial={})
-      @stack = [initial]
+      @stack = Balbo.lookup_stack + [initial]
       @raise_on_context_miss = false
     end
     
