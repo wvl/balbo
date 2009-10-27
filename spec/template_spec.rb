@@ -106,4 +106,29 @@ ENDTEMPLATE
     t("{{ one }}{include test }{{ two }}").render({"one"=>"1. ", "two"=>" 2."}).should == \
       "1. Just a test 2."
   end
+  
+  it "should render with inheritance" do
+    t("{extends layout }{block main }Hi{/block}").render('title'=>"Hello World").strip.should == <<-TMPL.strip
+<title>Hello World</title>
+Hi
+TMPL
+  end
+  
+  it "should render with inheritance two" do
+    t("{extends layout }{block main }Hi{/block}{block title}My {{ title }}{/block}").render('title'=>"Hello World").strip.should == <<-TMPL.strip
+<title>My Hello World</title>
+Hi
+TMPL
+  end
+  
+  it "should render with inheritance and includes" do
+    t("{extends layout}{block main}{include test}{/block}") \
+      .render('title'=>'Hi', 'canadian'=>true).strip.should == <<-TMPL.strip
+<title>Hi</title>
+Just a test, eh?
+TMPL
+  end
+      
+    
+
 end

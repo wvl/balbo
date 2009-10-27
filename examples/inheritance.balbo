@@ -1,0 +1,4 @@
+{extends root}
+{block main}
+<p>This is my page</p>
+{/block}

@@ -1,0 +1,12 @@
+<html>
+  <head>
+  <title>{block title}{{ title }}{/block}</title>
+  </head>
+  <body>
+    <h1>{block header}Home{/block}</h1>
+    {block main}
+      <p>Main content goes here</p>
+    {/block}
+  </body>
+</html>
+  

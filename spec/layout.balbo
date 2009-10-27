@@ -1,0 +1,4 @@
+<title>{block title}{{ title }}{/block}</title>
+{block main }
+<h1>Content from layout</h1>
+{/block}

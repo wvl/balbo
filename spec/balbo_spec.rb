@@ -15,6 +15,7 @@ require 'unescaped'
 require 'comments'
 require 'passenger'
 require 'double_section'
+require 'inheritance'
 
 describe "Examples" do
   def sample(file)
@@ -30,6 +31,7 @@ describe "Examples" do
     'comments' => Comments.new,
     'double_section' => DoubleSection.new,
     'template_partial' => TemplatePartial.new,
+    'inheritance' => {'title'=>'My Page'}
   }.each { |name, context|
     it "should render #{name} example" do
       balbo(name, context, exampledir).strip.should == sample(name)

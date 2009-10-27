@@ -1,5 +1,6 @@
 require 'balbo/template'
 require 'balbo/context'
+require 'balbo/blocks'
 
 # Mustache is the base class from which your Mustache subclasses
 # should inherit (though it can be used on its own).
