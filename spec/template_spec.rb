@@ -8,7 +8,12 @@ describe "Template tokenize" do
   {
     "Hello World" => [[:text, "Hello World"]],
     "Hello {{ name }}" => [[:text, "Hello "], [:var, "name"]],
-    "{if true }yes{/if}" => [[:if, "true"], [:text, "yes"], [:endif, nil]]
+    "{if true }yes{/if}" => [[:if, "true"], [:text, "yes"], [:endif, nil]],
+    "{{name}}{{ name}}{{ name }}{{name }}" => 4.times.map { [:var, "name"] },
+    "{if true }yes{/if}" => [[:if, "true"], [:text, "yes"], [:endif, nil]],
+    "{if true}yes{/if }" => [[:if, "true"], [:text, "yes"], [:endif, nil]],
+    "{if true }yes{/if true }" => [[:if, "true"], [:text, "yes"], [:endif, nil]],
+    "{if true }yes{/if random text}" => [[:if, "true"], [:text, "yes"], [:endif, nil]]
   }.each do |source, tokens|
     it "tokenize: #{source}" do
       t(source).tokenize.should == tokens
@@ -53,5 +58,9 @@ describe "Template tokenize" do
   it "should render a loop" do
     t("{loop names}<li>{{ name }}</li>{/loop}").render({
      "names"=>[{'name'=>'John'},{'name'=>'Jane'}] }).should == "<li>John</li><li>Jane</li>"
+  end
+  
+  it "should ignore comments" do
+    t("{# comments go like this}hey").render.should == "hey"
   end
 end

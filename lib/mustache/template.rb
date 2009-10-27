@@ -145,7 +145,8 @@ class Mustache
         :var => lambda { |token, data, t| Var.new(data) },
         :unvar => lambda { |token, data, t| Var.new(data, false) },
         :if => lambda { |token, data, t| If.new(data, t) },
-        :loop => lambda { |token, data, t| Loop.new(data, t) }
+        :loop => lambda { |token, data, t| Loop.new(data, t) },
+        :comment => lambda { |to,d,t| ""}
       }
     end
 
@@ -180,7 +181,7 @@ class Mustache
     
     def tokenize
       regex = / \{\{(\{?)(.*?)\}?\}\} | 
-                \{(if|else|loop|extends|block})(.*?)\} | 
+                \{(\#|if|else|loop|extends|block)(.*?)\} | 
                 \{\/(if|loop|block)(.*?)\} /xim
       result = []
       text = @source
@@ -188,7 +189,7 @@ class Mustache
         result << [:text, $`] unless $`.empty?
         result << [:var, $2.strip] if $2 and $1 != "{"
         result << [:unvar, $2.strip] if $2 and $1=="{"
-        result << [$3.to_sym, $4.strip] if $3
+        result << [($3=="#" ? :comment : $3.to_sym), $4.strip] if $3
         result << ["end#{$5}".to_sym, nil] if $5
         text = $'
       end
