@@ -1,10 +1,10 @@
 %h1= header
-- item.each do |i|
+- items.each do |i|
   %ul
     - if i[:current]
       %li= i[:name]
     - else
       %li
         %a{:href => i[:url]}= i[:name]
-- if item.empty?
+- if items.empty?
   %p= The list is empty.

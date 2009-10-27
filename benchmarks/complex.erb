@@ -1,7 +1,7 @@
 <h1><%= header %></h1>
-<% if not item.empty? %>
+<% if not items.empty? %>
   <ul>
-  <% for i in item %>
+  <% for i in items %>
     <% if i[:current] %>
       <li><strong><%= i[:name] %></strong></li>
     <% else %>
@@ -10,6 +10,6 @@
   <% end %>
   </ul>
 <% end %>
-<% if item.empty? %>
+<% if items.empty? %>
   <p>The list is empty.</p>
 <% end %>
