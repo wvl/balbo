@@ -3,9 +3,7 @@ require 'cgi'
 class Mustache
   # A Template is a compiled version of a Mustache template.
   #
-  # The idea is this: when handed a Mustache template, convert it into
-  # a Ruby string by transforming Mustache tags into interpolated
-  # Ruby.
+  # Tokenize the text stream, then parse the token sequence
   #
   # You shouldn't use this class directly.
   class Template
@@ -30,18 +28,134 @@ class Mustache
       end
     end
 
-    # Expects a Mustache template as a string along with a template
+    class Context
+      def initialize(initial={})
+        @stack = [initial]
+      end
+      
+      def [](name)
+        @stack.reverse_each do |hash|
+          val = hash[name]
+          return val if not val.nil?
+        end
+        nil
+      end
+      
+      def has_key?(key)
+        not send(:[], key).nil?
+      end
+      
+      def resolve(path, from=self)
+        path.to_s.split(/\./).each do |part|
+          if from.respond_to?(:has_key?) and t = from[part]
+            from = t
+          elsif from.respond_to?(part)
+            from = from.send(part)
+          else
+            return "" # Fail silently
+          end
+        end
+        from
+      end
+      
+      def evaluate(source)
+        eval(source)
+      end
+      
+      def method_missing(key, *args)
+        resolve(key.to_s)
+      end
+    end
+    
+    class Var
+      def initialize(arglist)
+        @var = arglist
+      end
+      
+      def render(context)
+        context.resolve(@var)
+      end
+    end
+    
+    class If
+      def initialize(data, template)
+        @var = data
+        @nodes = template.compile { |token, data| token == :endif }        
+      end
+      
+      def render(context)
+        result = ""
+        cond = context.evaluate(@var)
+        if cond && (!cond.respond_to?(:empty?) || !cond.empty?)
+          @nodes.each do |node|
+            result << (node.respond_to?(:render) ? node.render(context) : node)
+          end
+        end 
+        result
+      end
+    end
+    
+    # Expects a Balbo template as a string along with a template
     # path, which it uses to find partials.
-    def initialize(source, template_path = '.', template_extension = 'mustache')
+    def initialize(source, template_path = '.', template_extension = 'balbo')
       @source = source
       @template_path = template_path
       @template_extension = template_extension
-      @tmpid = 0
+      @tokens = nil
+      @nodes = nil
+      @tags = {
+        :text => lambda { |token, data, t| data },
+        :var => lambda { |token, data, t| Var.new(data) },
+        :if => lambda { |token, data, t| If.new(data, t) }
+      }
     end
 
+    def tokens
+      @tokens ||= tokenize
+    end
+
+    def compile(&block)
+      nodes = []
+      while !tokens.empty?
+        token, data = tokens.shift
+        
+        #nodes << @tags[token].call(token, data, self) if @tags.has_key?(token)
+        nodes << data if token == :text
+        nodes << Var.new(data) if token == :var
+        nodes << If.new(data, self) if token == :if
+        return nodes if block_given? && block.call(token, data)
+      end
+      nodes
+    end
+    
+    def tokenize
+      regex = / \{\{(.*?)\}\} | \{if(.*?)\} | \{\/if(.*?)\} /xim
+      result = []
+      text = @source
+      while text =~ regex
+        result << [:text, $`] unless $`.empty?
+        result << [:var, $1.strip] if $1
+        result << [:if, $2.strip] if $2
+        result << [:endif, nil] if $3
+        text = $'
+      end
+      result << [:text, text] if not text.empty?
+      result
+    end
+    
+    def render(context={})
+      
+      result = ""
+      context = Context.new(context)
+      (@nodes ||= compile).each do |node|
+        result << (node.respond_to?(:render) ? node.render(context) : node)
+      end
+      result
+    end
+    
     # Renders the `@source` Mustache template using the given
     # `context`, which should be a simple hash keyed with symbols.
-    def render(context)
+    def renderit(context)
       # Compile our Mustache template into a Ruby string
       compiled = "def render(ctx) #{compile} end"
 
@@ -56,9 +170,9 @@ class Mustache
 
     # Does the dirty work of transforming a Mustache template into an
     # interpolation-friendly Ruby string.
-    def compile(src = @source)
-      "\"#{compile_sections(src)}\""
-    end
+#     def compile(src = @source)
+#       "\"#{compile_sections(src)}\""
+#     end
 
     # {{#sections}}okay{{/sections}}
     #
