@@ -2,7 +2,7 @@ require File.dirname(__FILE__)+'/spec_helper'
 
 describe "Template tokenize" do
   def t(s)
-    Mustache::Template.new(s)
+    Mustache::Template.new(s, File.dirname(__FILE__))
   end
   
   {
@@ -62,5 +62,13 @@ describe "Template tokenize" do
   
   it "should ignore comments" do
     t("{# comments go like this}hey").render.should == "hey"
+  end
+  
+  it "should be able to parse and load a template" do
+    t("").load("test").render.should == "Just a test"
+  end
+  
+  it "should include a partial" do
+    t("{include test }").render.should == "Just a test"
   end
 end
