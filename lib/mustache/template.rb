@@ -78,12 +78,14 @@ class Mustache
     end
         
     class Var
-      def initialize(arglist)
+      def initialize(arglist, escaped=true)
         @var = arglist
+        @escaped = escaped
       end
       
       def render(context)
-        context.resolve(@var)
+        value = context.resolve(@var)
+        @escaped ? CGI.escapeHTML(value) : value
       end
     end
     
@@ -141,6 +143,7 @@ class Mustache
       @tags = {
         :text => lambda { |token, data, t| data },
         :var => lambda { |token, data, t| Var.new(data) },
+        :unvar => lambda { |token, data, t| Var.new(data, false) },
         :if => lambda { |token, data, t| If.new(data, t) },
         :loop => lambda { |token, data, t| Loop.new(data, t) }
       }
@@ -176,16 +179,17 @@ class Mustache
     end
     
     def tokenize
-      regex = / \{\{(.*?)\}\} | 
+      regex = / \{\{(\{?)(.*?)\}?\}\} | 
                 \{(if|else|loop|extends|block})(.*?)\} | 
                 \{\/(if|loop|block)(.*?)\} /xim
       result = []
       text = @source
       while text =~ regex
         result << [:text, $`] unless $`.empty?
-        result << [:var, $1.strip] if $1
-        result << [$2.to_sym, $3.strip] if $2
-        result << ["end#{$4}".to_sym, nil] if $4
+        result << [:var, $2.strip] if $2 and $1 != "{"
+        result << [:unvar, $2.strip] if $2 and $1=="{"
+        result << [$3.to_sym, $4.strip] if $3
+        result << ["end#{$5}".to_sym, nil] if $5
         text = $'
       end
       result << [:text, text] if not text.empty?

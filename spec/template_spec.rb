@@ -23,6 +23,14 @@ describe "Template tokenize" do
     t("Hello {{ name }}").render({'name' => "Joe"}).should == "Hello Joe"
   end
   
+  it "should render vars escaped" do
+    t("<h1>{{title}}</h1>").render('title'=>"Bear > Shark").should == "<h1>Bear &gt; Shark</h1>"
+  end
+
+  it "should render vars unescaped with triple braces" do
+    t("<body>{{{c}}}</body>").render('c'=>"<p>Content</p>").should == "<body><p>Content</p></body>"
+  end
+  
   it "should render a simple template with an if block" do
     t("{if true }yes{/if}").render({}).should == "yes"
     t("{if false }no{/if}").render({}).should == ""
