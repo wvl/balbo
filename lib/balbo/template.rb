@@ -1,6 +1,6 @@
 require 'cgi'
 
-class Mustache
+module Balbo
   # A Template is a compiled version of a Mustache template.
   #
   # Tokenize the text stream, then parse the token sequence
@@ -28,54 +28,6 @@ class Mustache
       end
     end
 
-    class Context
-      def initialize(initial={})
-        @stack = [initial]
-      end
-      
-      def push(hash)
-        @stack << hash
-        self
-      end
-      
-      def pop
-        @stack.pop if @stack.size > 1
-        self
-      end
-      
-      def [](name)
-        @stack.reverse_each do |hash|
-          val = hash[name]
-          return val if not val.nil?
-        end
-        nil
-      end
-      
-      def has_key?(key)
-        not send(:[], key).nil?
-      end
-      
-      def resolve(path, from=self)
-        path.to_s.split(/\./).each do |part|
-          if from.respond_to?(:has_key?) and t = from[part]
-            from = t
-          elsif from.respond_to?(part)
-            from = from.send(part)
-          else
-            return "" # Fail silently
-          end
-        end
-        from
-      end
-      
-      def evaluate(source)
-        eval(source)
-      end
-      
-      def method_missing(key, *args)
-        resolve(key.to_s)
-      end
-    end
         
     class Var
       def initialize(arglist, escaped=true)
@@ -85,20 +37,29 @@ class Mustache
       
       def render(context)
         value = context.resolve(@var)
-        @escaped ? CGI.escapeHTML(value) : value
+        @escaped ? CGI.escapeHTML(value.to_s) : value
       end
     end
     
     class If
       def initialize(data, template)
         @var = data
-        @nodes = template.compile { |token, data| token == :endif }        
+        was_else = false
+        @body = template.compile { |token, data| 
+          if [:endif, :else].include?(token) 
+            was_else = token == :else
+            true
+          end
+        }
+        @else_body = template.compile { |token, data| token == :endif } if was_else
       end
       
       def render(context)
         cond = context.evaluate(@var)
         if cond && (!cond.respond_to?(:empty?) || !cond.empty?)
-          @nodes.render(context)
+          @body.render(context)
+        elsif @else_body
+          @else_body.render(context)
         else
           ""
         end 
@@ -142,6 +103,11 @@ class Mustache
       end
     end
         
+    def self.load(name, template_path='.', template_extension='balbo')
+      new(File.read("#{template_path}/#{name}.#{template_extension}"), 
+        template_path, template_extension)
+    end
+    
     # Expects a Balbo template as a string along with a template
     # path, which it uses to find partials.
     def initialize(source="", template_path = '.', template_extension = 'balbo')
@@ -162,7 +128,8 @@ class Mustache
     end
 
     def load(name)
-      compile(tokenize(File.read("#{@template_path}/#{name}.#{@template_extension}")))
+      self.class.new(File.read("#{@template_path}/#{name}.#{@template_extension}"), \
+        @template_path, @template_extension)
     end
       
     def nodelist(nodes)
@@ -188,7 +155,6 @@ class Mustache
       nodes = []
       while !tokens.empty?
         token, data = tokens.shift
-        
         nodes << @tags[token].call(token, data, self) if @tags.has_key?(token)
         break if block_given? && block.call(token, data)
       end
@@ -197,8 +163,8 @@ class Mustache
     
     def tokenize(source=@source)
       regex = / \{\{(\{?)(.*?)\}?\}\} |                     # {{ var }}, or {{{ var }}} 1,2
-                \{(\#|if|else|loop|include|extends|block)(.*?)\} |  # {if expression }  3,4
-                \{\/(if|loop|block)(.*?)\} /xim             # {/if closing expression } 5,6
+                \{(\#|if|else|loop|include|extends|block)(.*?)\}\s* |  # {if expression }  3,4
+                \{\/(if|loop|block)(.*?)\}\s*/xim             # {/if closing expression } 5,6
       result = []
       text = source
       while text =~ regex

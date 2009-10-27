@@ -36,6 +36,11 @@ rescue LoadError
   puts "Install it with: gem install jeweler"
 end
 
+desc "Run all the specs"
+task :spec do
+  sh "bacon -Ilib --automatic -c"
+end
+
 begin
   require 'sdoc_helpers'
 rescue LoadError

@@ -1,10 +1,7 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-require 'mustache'
+require 'balbo'
 
-class Passenger < Mustache
-  self.path = File.dirname(__FILE__)
-  self.template_extension = 'conf'
-
+class Passenger
   def server
     "example.com"
   end
@@ -23,5 +20,12 @@ class Passenger < Mustache
 end
 
 if $0 == __FILE__
-  puts Passenger.to_text
+  puts balbo('passenger', Passenger.new, File.dirname(__FILE__), 'conf')
 end
+
+__END__
+<VirtualHost *>
+  ServerName example.com
+  DocumentRoot /var/www/example.com
+  RailsEnv production
+</VirtualHost>

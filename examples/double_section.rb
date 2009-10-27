@@ -1,9 +1,8 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-require 'mustache'
+require 'balbo'
 
-class DoubleSection < Mustache
-  self.path = File.dirname(__FILE__)
-
+class DoubleSection
+  
   def t
     true
   end
@@ -12,3 +11,13 @@ class DoubleSection < Mustache
     "second"
   end
 end
+
+
+if $0 == __FILE__
+  puts balbo('double_section', DoubleSection.new, File.dirname(__FILE__))
+end
+
+__END__
+* first
+* second
+* third

@@ -1,9 +1,7 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-require 'mustache'
+require 'balbo'
 
-class ViewPartial < Mustache
-  self.path = File.dirname(__FILE__)
-
+class ViewPartial
   def greeting
     "Welcome"
   end
@@ -14,5 +12,7 @@ class ViewPartial < Mustache
 end
 
 if $0 == __FILE__
-  puts ViewPartial.to_html
+  puts balbo('view_partial', ViewPartial.new, File.dirname(__FILE__))
 end
+
+__END__

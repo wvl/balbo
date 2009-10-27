@@ -1,15 +1,42 @@
 require File.dirname(__FILE__)+'/spec_helper'
 
-describe "Balbo render" do
-  it "should render text with no arguments" do
-    Mustache.render('Hello World!').should == 'Hello World!'
+def exampledir(file=nil, ext="rb")
+  File.dirname(__FILE__)+"/../examples"+(file.nil? ? "" : "/#{file}.#{ext}")
+end
+
+$LOAD_PATH.unshift exampledir
+require 'simple'
+require 'namespaced'
+require 'complex_view'
+# require 'view_partial'
+require 'template_partial'
+require 'escaped'
+require 'unescaped'
+require 'comments'
+require 'passenger'
+require 'double_section'
+
+describe "Examples" do
+  def sample(file)
+    File.read(exampledir(file)).gsub("\r\n", "\n").split(/^__END__$/)[1].strip
   end
   
-  it "should render text with a param block" do
-    Mustache.render('Hello {{planet}}!', :planet => 'World').should == 'Hello World!'
-  end
+  {
+    'simple' => Simple.new,
+    'namespaced' => TestViews::Namespaced.new,
+    'escaped' => Escaped.new,
+    'unescaped' => Unescaped.new,
+    'complex_view' => ComplexView.new,
+    'comments' => Comments.new,
+    'double_section' => DoubleSection.new,
+    'template_partial' => TemplatePartial.new,
+  }.each { |name, context|
+    it "should render #{name} example" do
+      balbo(name, context, exampledir).strip.should == sample(name)
+    end
+  }
   
-  it "should render text with an if block" do
-    Mustache.render('Hello {if true}World!{/if}').should == "Hello World!"
+  it "should render passenger example" do
+    balbo('passenger', Passenger.new, exampledir, 'conf').strip.should == sample('passenger')
   end
 end

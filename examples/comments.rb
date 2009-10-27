@@ -1,14 +1,16 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-require 'mustache'
+require 'balbo'
 
-class Comments < Mustache
-  self.path = File.dirname(__FILE__)
-
+class Comments
   def title
     "A Comedy of Errors"
   end
 end
 
 if $0 == __FILE__
-  puts Comments.to_html
+  puts balbo('comments', Comments.new, File.dirname(__FILE__))
 end
+
+__END__
+<h1>A Comedy of Errors</h1>
+

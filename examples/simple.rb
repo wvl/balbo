@@ -1,9 +1,7 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-require 'mustache'
+require 'balbo'
 
-class Simple < Mustache
-  self.path = File.dirname(__FILE__)
-
+class Simple
   def name
     "Chris"
   end
@@ -22,5 +20,10 @@ class Simple < Mustache
 end
 
 if $0 == __FILE__
-  puts Simple.to_html
+  puts balbo('simple', Simple.new, File.dirname(__FILE__))
 end
+
+__END__
+Hello Chris
+You have just won $10000!
+Well, $6000.0, after taxes.

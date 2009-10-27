@@ -1,10 +1,8 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-require 'mustache'
+require 'balbo'
 
 module TestViews
-  class Namespaced < Mustache
-    self.path = File.dirname(__FILE__)
-
+  class Namespaced
     def title
       "Dragon < Tiger"
     end
@@ -13,5 +11,8 @@ end
 
 
 if $0 == __FILE__
-  puts TestViews::Namespaced.to_html
+  puts balbo('namespaced', TestViews::Namespaced.new, File.dirname(__FILE__))
 end
+
+__END__
+<h1>Dragon &lt; Tiger</h1>

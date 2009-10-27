@@ -1,14 +1,16 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-require 'mustache'
+require 'balbo'
 
-class Escaped < Mustache
-  self.path = File.dirname(__FILE__)
-
+class Escaped
+  
   def title
     "Bear > Shark"
   end
 end
 
 if $0 == __FILE__
-  puts Escaped.to_html
+  puts balbo('escaped', Escaped.new, File.dirname(__FILE__))
 end
+
+__END__
+<h1>Bear &gt; Shark</h1>

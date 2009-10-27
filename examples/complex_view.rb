@@ -1,34 +1,31 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
-require 'mustache'
+require 'balbo'
 
-class ComplexView < Mustache
-  self.path = File.dirname(__FILE__)
+class ComplexView 
 
   def header
     "Colors"
   end
 
-  def item
+  def items
     items = []
-    items << { :name => 'red', :current => true, :url => '#Red' }
-    items << { :name => 'green', :current => false, :url => '#Green' }
-    items << { :name => 'blue', :current => false, :url => '#Blue' }
+    items << { 'name' => 'red', 'current' => true, 'url' => '#Red' }
+    items << { 'name' => 'green', 'current' => false, 'url' => '#Green' }
+    items << { 'name' => 'blue', 'current' => false, 'url' => '#Blue' }
     items
-  end
-
-  def link
-    not context[:current]
-  end
-
-  def list
-    not item.empty?
-  end
-
-  def empty
-    item.empty?
   end
 end
 
 if $0 == __FILE__
-  puts ComplexView.to_html
+  puts balbo('complex_view', ComplexView.new, File.dirname(__FILE__))
 end
+
+__END__
+<h1>Colors</h1>
+<ul>
+  <li><strong>red</strong></li>
+    <li><a href="#Green">green</a></li>
+    <li><a href="#Blue">blue</a></li>
+    </ul>
+
+

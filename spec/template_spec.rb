@@ -1,10 +1,10 @@
 require File.dirname(__FILE__)+'/spec_helper'
 
-describe "Template tokenize" do
-  def t(s)
-    Mustache::Template.new(s, File.dirname(__FILE__))
-  end
-  
+def t(s)
+  Balbo::Template.new(s, File.dirname(__FILE__))
+end
+
+describe "Template tokenize" do  
   {
     "Hello World" => [[:text, "Hello World"]],
     "Hello {{ name }}" => [[:text, "Hello "], [:var, "name"]],
@@ -19,7 +19,10 @@ describe "Template tokenize" do
       t(source).tokenize.should == tokens
     end
   end
-  
+
+end  
+
+describe "Template render" do
   it "should render a simple template" do
     t("Hello World").render.should == "Hello World"
   end
@@ -41,8 +44,21 @@ describe "Template tokenize" do
     t("{if false }no{/if}").render({}).should == ""
     t("{if check }yes{/if}").render({'check'=>true}).should == "yes"
     t("{if x==3 }yes x is 3{/if}").render({'x'=>3}).should == "yes x is 3"
+    t("{if american}yes{/if}").render.should == ""
   end
   
+  it "should render an else block" do
+    t("{if false}no{else}yes{/if}").render.should == "yes"
+  end
+  
+  it "should not supress whitespace" do
+    t(<<-ENDTEMPLATE).render.should == "      Yes\n      "
+      {if true}
+        Yes
+      {/if}
+ENDTEMPLATE
+  end
+
   it "should output nested context vars" do
     t("{{ user.name }}").render({'user'=>{'name'=>'Joe'}}).should == "Joe"
   end
@@ -60,6 +76,16 @@ describe "Template tokenize" do
      "names"=>[{'name'=>'John'},{'name'=>'Jane'}] }).should == "<li>John</li><li>Jane</li>"
   end
   
+  it "should render a complex loop" do
+    t("{loop items }{if current}<li>{{name}}</li>{/if current}{/loop items }").render({
+        'items' => [
+         { 'name' => 'red', 'current' => true, :url => '#Red' },
+         { :name => 'green', :current => false, :url => '#Green' },
+         { :name => 'blue', :current => false, :url => '#Blue' }
+        ]   
+    }).should == "<li>red</li>"
+  end
+  
   it "should ignore comments" do
     t("{# comments go like this}hey").render.should == "hey"
   end
@@ -68,7 +94,16 @@ describe "Template tokenize" do
     t("").load("test").render.should == "Just a test"
   end
   
+  it "should load a template with the class method" do
+    Balbo::Template.load("test", File.dirname(__FILE__)).render.should == "Just a test"
+  end
+  
   it "should include a partial" do
     t("{include test }").render.should == "Just a test"
+  end
+  
+  it "should keep rendering after the partial" do
+    t("{{ one }}{include test }{{ two }}").render({"one"=>"1. ", "two"=>" 2."}).should == \
+      "1. Just a test 2."
   end
 end

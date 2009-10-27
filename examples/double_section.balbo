@@ -1,0 +1,7 @@
+{if t}
+  * first
+{/if }
+  * {{two}}
+{if t}
+  * third
+{/if t}
