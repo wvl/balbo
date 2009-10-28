@@ -312,57 +312,23 @@ app in examples/app.
 Document the View module integration here.
 
 
-[Rack::Bug][4]
----------
-
-Mustache also ships with a `Rack::Bug` panel. In your `config.ru` add
-the following code:
-
-    require 'rack/bug/panels/mustache_panel'
-    use Rack::Bug::MustachePanel
-
-Using Rails? Add this to your initializer or environment file:
-
-    require 'rack/bug/panels/mustache_panel'
-    config.middleware.use "Rack::Bug::MustachePanel"
-
-[![Rack::Bug](http://img.skitch.com/20091027-xyf4h1yxnefpp7usyddrcmc7dn.png)][5]
-
 
 Installation
 ------------
 
 ### [Gemcutter](http://gemcutter.org/)
 
-    $ gem install mustache
-
-### [Rip](http://hellorip.com)
-
-    $ rip install git://github.com/defunkt/mustache.git
-
+    $ gem install balbo
 
 Acknowledgements
 ----------------
 
-Thanks to [Tom Preston-Werner](http://github.com/mojombo) for showing
-me ctemplate and [Leah Culver](http://github.com/leah) for the name "Mustache."
-
+Thanks to [Chris Wanstrath](http://github.com/defunkt) for mustache.
 
 Meta
 ----
 
-* Code: `git clone git://github.com/defunkt/mustache.git`
-* Home: <http://github.com/defunkt/mustache>
-* Docs: <http://defunkt.github.com/mustache>
-* Bugs: <http://github.com/defunkt/mustache/issues>
-* List: <http://groups.google.com/group/mustache-rb>
-* Test: <http://runcoderun.com/defunkt/mustache>
-* Gems: <http://gemcutter.org/gems/mustache>
-* Boss: Chris Wanstrath :: <http://github.com/defunkt>
+* Code: `git clone git://github.com/wvl/balbo.git`
+* Home: <http://github.com/wvl/balbo>
 
 [1]: http://github.com/defunkt/mustache
-[2]: http://code.google.com/p/google-ctemplate/
-[2]: http://www.ivan.fomichev.name/2008/05/erlang-template-engine-prototype.html
-[3]: http://google-ctemplate.googlecode.com/svn/trunk/doc/howto.html
-[4]: http://github.com/brynary/rack-bug/
-[5]: http://img.skitch.com/20091027-n8pxwwx8r61tc318a15q1n6m14.png
