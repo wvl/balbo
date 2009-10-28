@@ -8,7 +8,7 @@ class Comments
 end
 
 if $0 == __FILE__
-  puts balbo('comments', Comments.new, File.dirname(__FILE__))
+  puts Balbo.render('comments', Comments.new, File.dirname(__FILE__))
 end
 
 __END__

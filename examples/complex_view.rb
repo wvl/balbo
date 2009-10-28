@@ -17,7 +17,7 @@ class ComplexView
 end
 
 if $0 == __FILE__
-  puts balbo('complex_view', ComplexView.new, File.dirname(__FILE__))
+  puts Balbo.render('complex_view', ComplexView.new, File.dirname(__FILE__))
 end
 
 __END__

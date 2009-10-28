@@ -11,7 +11,7 @@ end
 
 
 if $0 == __FILE__
-  puts balbo('namespaced', TestViews::Namespaced.new, File.dirname(__FILE__))
+  puts Balbo.render('namespaced', TestViews::Namespaced.new, File.dirname(__FILE__))
 end
 
 __END__

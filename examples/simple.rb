@@ -20,7 +20,7 @@ class Simple
 end
 
 if $0 == __FILE__
-  puts balbo('simple', Simple.new, File.dirname(__FILE__))
+  puts Balbo.render('simple', Simple.new, File.dirname(__FILE__))
 end
 
 __END__

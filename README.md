@@ -164,6 +164,53 @@ following:
     end
 
 
+
+### Extends
+
+Each stache must define its own inheritance heirarchy. It does this with the 'extends' section command.
+
+    {{^ layout }}
+    <h1>Default content</h1>
+    {{/ layout }}
+
+and layout.mustache:
+
+    {{& yield }}
+    {{/ yield }}
+
+This way, you could do things like:
+
+    {{^header}}
+      {{&title}}This is my title{{/title}}
+      {{&css}}<link rel="stylesheet" ..>{{/css}}
+    {{/header}}
+    <h1>Content</h1>
+    {{^footer}}
+    {{/footer}}
+
+
+### Block Sections
+
+Block sections define an overridable content area. So, a layout can define default content for a block, which is then overrided by the specific stache.
+
+For example, this layout.mustache:
+
+    {{&header}}
+      <h1>Layout Title</h1>
+    {{/header}}
+
+With this stache:
+
+    {{^layout}}
+    {{&header}}
+      <h1>This is my header</h1>
+    {{/header}}
+    {{/layout}}
+
+Would render:
+
+    <h1>This is my header</h1>
+
 ### Comments
 
 Comments begin with a bang and are ignored. The following template:

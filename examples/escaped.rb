@@ -9,7 +9,7 @@ class Escaped
 end
 
 if $0 == __FILE__
-  puts balbo('escaped', Escaped.new, File.dirname(__FILE__))
+  puts Balbo.render('escaped', Escaped.new, File.dirname(__FILE__))
 end
 
 __END__

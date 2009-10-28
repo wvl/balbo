@@ -12,7 +12,7 @@ class ViewPartial
 end
 
 if $0 == __FILE__
-  puts balbo('view_partial', ViewPartial.new, File.dirname(__FILE__))
+  puts Balbo.render('view_partial', ViewPartial.new, File.dirname(__FILE__))
 end
 
 __END__

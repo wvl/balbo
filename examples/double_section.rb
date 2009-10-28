@@ -14,7 +14,7 @@ end
 
 
 if $0 == __FILE__
-  puts balbo('double_section', DoubleSection.new, File.dirname(__FILE__))
+  puts Balbo.render('double_section', DoubleSection.new, File.dirname(__FILE__))
 end
 
 __END__

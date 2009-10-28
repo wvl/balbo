@@ -1,3 +1,5 @@
+require 'cgi'
+
 module Balbo
   class Var
     def initialize(arglist, escaped=true)

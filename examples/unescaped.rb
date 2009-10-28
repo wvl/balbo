@@ -9,7 +9,7 @@ class Unescaped
 end
 
 if $0 == __FILE__
-  puts balbo('unescaped', Unescaped.new, File.dirname(__FILE__))
+  puts Balbo.render('unescaped', Unescaped.new, File.dirname(__FILE__))
 end
 
 __END__

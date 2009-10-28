@@ -3,7 +3,7 @@ require 'balbo'
 
 
 if $0 == __FILE__
-  puts balbo('inheritance', {'title'=>"My Page"}, File.dirname(__FILE__))
+  puts Balbo.render('inheritance', {'title'=>"My Page"}, File.dirname(__FILE__))
 end
 
 __END__

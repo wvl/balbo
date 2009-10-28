@@ -18,6 +18,8 @@ require 'double_section'
 require 'inheritance'
 
 describe "Examples" do
+  
+  
   def sample(file)
     File.read(exampledir(file)).gsub("\r\n", "\n").split(/^__END__$/)[1].strip
   end
@@ -34,11 +36,11 @@ describe "Examples" do
     'inheritance' => {'title'=>'My Page'}
   }.each { |name, context|
     it "should render #{name} example" do
-      balbo(name, context, exampledir).strip.should == sample(name)
+      Balbo.render(name, context, exampledir).strip.should == sample(name)
     end
   }
   
   it "should render passenger example" do
-    balbo('passenger', Passenger.new, exampledir, 'conf').strip.should == sample('passenger')
+    Balbo.render('passenger', Passenger.new, exampledir, 'conf').strip.should == sample('passenger')
   end
 end

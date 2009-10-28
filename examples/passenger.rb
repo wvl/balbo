@@ -20,7 +20,7 @@ class Passenger
 end
 
 if $0 == __FILE__
-  puts balbo('passenger', Passenger.new, File.dirname(__FILE__), 'conf')
+  puts Balbo.render('passenger', Passenger.new, File.dirname(__FILE__), 'conf')
 end
 
 __END__

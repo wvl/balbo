@@ -13,7 +13,7 @@ class TemplatePartial
 end
 
 if $0 == __FILE__
-  puts balbo('template_partial', TemplatePartial.new, File.dirname(__FILE__))
+  puts Balbo.render('template_partial', TemplatePartial.new, File.dirname(__FILE__))
 end
 
 __END__

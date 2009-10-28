@@ -1,13 +1,6 @@
-require 'rake/testtask'
 require 'rake/rdoctask'
 
-task :default => :test
-
-Rake::TestTask.new do |t|
-  t.libs << 'lib'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = false
-end
+task :default => :spec
 
 desc "Build a gem"
 task :gem => [ :gemspec, :build ]

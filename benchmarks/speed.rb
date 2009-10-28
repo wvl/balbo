@@ -59,7 +59,7 @@ unless ENV['CACHED']
 end
 
 bench 'balbo w/o caching' do
-  balbo('complex_view', ComplexView.new, File.dirname(__FILE__)+'/../examples')
+  Balbo.render('complex_view', ComplexView.new, File.dirname(__FILE__)+'/../examples')
 end
   
 ## mustache
