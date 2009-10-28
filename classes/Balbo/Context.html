@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Balbo::Context</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+    <script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>     
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span> 
+            Balbo::Context 
+            
+                <span class="parent">&lt; 
+                    
+                    <a href="../Object.html">Object</a>
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../files/lib/balbo/context_rb.html">lib/balbo/context.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    
+    <div class="description">
+        <p>
+A <a href="Context.html">Context</a> represents the context which a
+Mustache template is executed within. All Mustache tags reference keys in
+the <a href="Context.html">Context</a>.
+</p>
+
+    </div>
+    
+
+    
+
+    
+    
+
+    
+    
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+    
+        <dt>#</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000011">[]</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>E</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000016">evaluate</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>H</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000013">has_key?</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>M</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000019">method_missing</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>N</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000006">new</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>P</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000009">pop</a>,</li>
+                
+                <li><a href="#M000007">push</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>R</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000014">resolve</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>T</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000010">top</a></li>
+                
+            </ul>
+        </dd>
+    
+    </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+            <div class="sectiontitle">Class Public methods</div>
+            
+            <div class="method">
+                <div class="title" id="M000006">
+                    
+                    <a name="M000006"></a><b>new</b>(initial={})
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000006_source')" id="l_M000006_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/b8464158d8b19190ec8dbbfb592fe8fb1c909e6b/lib/balbo/context.rb#L35" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000006_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/context.rb, line 35</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">initial</span>={})
+      <span class="ruby-ivar">@stack</span> = [<span class="ruby-identifier">initial</span>]
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="sectiontitle">Instance Public methods</div>
+            
+            <div class="method">
+                <div class="title" id="M000011">
+                    
+                    <a name="M000011"></a><b>[]</b>(name)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000011_source')" id="l_M000011_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/b8464158d8b19190ec8dbbfb592fe8fb1c909e6b/lib/balbo/context.rb#L53" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000011_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/context.rb, line 53</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-operator">[]</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-ivar">@stack</span>.<span class="ruby-identifier">reverse_each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">hash</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:has_key?</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">name</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">name</span>]
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:has_key?</span>) <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">hash</span>[<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>]
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">name</span>)
+          <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">hash</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">name</span>)
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">Balbo</span>.<span class="ruby-identifier">raise_on_context_miss?</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">ContextMiss</span>.<span class="ruby-identifier">new</span>(<span class="ruby-node">&quot;Can't find #{name} in #{self.inspect}&quot;</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-value str">&quot;&quot;</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000016">
+                    
+                    <a name="M000016"></a><b>evaluate</b>(source)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000016_source')" id="l_M000016_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/b8464158d8b19190ec8dbbfb592fe8fb1c909e6b/lib/balbo/context.rb#L86" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000016_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/context.rb, line 86</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">evaluate</span>(<span class="ruby-identifier">source</span>)
+      <span class="ruby-constant">Proxy</span>.<span class="ruby-identifier">new</span>(<span class="ruby-keyword kw">self</span>).<span class="ruby-identifier">_eval</span>(<span class="ruby-identifier">source</span>)
+<span class="ruby-comment cmt">#       require 'ruby-debug'; debugger if source==&quot;t&quot;</span>
+      <span class="ruby-comment cmt">#eval(source)</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000013">
+                    
+                    <a name="M000013"></a><b>has_key?</b>(key)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000013_source')" id="l_M000013_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/b8464158d8b19190ec8dbbfb592fe8fb1c909e6b/lib/balbo/context.rb#L69" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000013_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/context.rb, line 69</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">key</span>)
+      <span class="ruby-keyword kw">not</span> <span class="ruby-identifier">send</span>(<span class="ruby-identifier">:[]</span>, <span class="ruby-identifier">key</span>).<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000019">
+                    
+                    <a name="M000019"></a><b>method_missing</b>(key, *args)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000019_source')" id="l_M000019_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/b8464158d8b19190ec8dbbfb592fe8fb1c909e6b/lib/balbo/context.rb#L92" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000019_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/context.rb, line 92</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">method_missing</span>(<span class="ruby-identifier">key</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">args</span>)
+      <span class="ruby-identifier">resolve</span>(<span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000009">
+                    
+                    <a name="M000009"></a><b>pop</b>()
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000009_source')" id="l_M000009_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/b8464158d8b19190ec8dbbfb592fe8fb1c909e6b/lib/balbo/context.rb#L44" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000009_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/context.rb, line 44</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">pop</span>
+      <span class="ruby-ivar">@stack</span>.<span class="ruby-identifier">pop</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@stack</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">1</span>
+      <span class="ruby-keyword kw">self</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000007">
+                    
+                    <a name="M000007"></a><b>push</b>(hash)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000007_source')" id="l_M000007_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/b8464158d8b19190ec8dbbfb592fe8fb1c909e6b/lib/balbo/context.rb#L39" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000007_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/context.rb, line 39</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">push</span>(<span class="ruby-identifier">hash</span>)
+      <span class="ruby-ivar">@stack</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">hash</span>
+      <span class="ruby-keyword kw">self</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000014">
+                    
+                    <a name="M000014"></a><b>resolve</b>(path, from=self)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000014_source')" id="l_M000014_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/b8464158d8b19190ec8dbbfb592fe8fb1c909e6b/lib/balbo/context.rb#L73" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000014_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/context.rb, line 73</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">resolve</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">from</span>=<span class="ruby-keyword kw">self</span>)
+      <span class="ruby-identifier">path</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp re">/\./</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">part</span><span class="ruby-operator">|</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">from</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:has_key?</span>) <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">t</span> = <span class="ruby-identifier">from</span>[<span class="ruby-identifier">part</span>]
+          <span class="ruby-identifier">from</span> = <span class="ruby-identifier">t</span>
+        <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">from</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">part</span>)
+          <span class="ruby-identifier">from</span> = <span class="ruby-identifier">from</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">part</span>)
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">return</span> <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-comment cmt"># Fail silently</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">from</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000010">
+                    
+                    <a name="M000010"></a><b>top</b>()
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000010_source')" id="l_M000010_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/b8464158d8b19190ec8dbbfb592fe8fb1c909e6b/lib/balbo/context.rb#L49" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000010_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/context.rb, line 49</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">top</span>
+      <span class="ruby-ivar">@stack</span>.<span class="ruby-identifier">last</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+</div>
+    </div>
+  </body>
+</html>    

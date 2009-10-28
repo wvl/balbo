@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>README.md</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../css/reset.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen" />
+    <script src="../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/main.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>     
+    <div class="banner">
+        <h1>
+            README.md
+        </h1>
+        <ul class="files">
+            <li>README.md</li>
+            <li>Last modified: Wed Oct 28 15:53:55 -0600 2009</li>
+        </ul>
+    </div>
+
+    <div id="bodyContent">
+        <div id="content">
+    
+    <div class="description">
+        <h1>Balbo</h1>
+
+<p>Balbo, is a fork and almost complete rewrite of <a href="http://github.com/defunkt/mustache">Mustache</a>. It attempts
+to take the best aspects of Mustache, Django Templates, and ERB, and mash
+them together.</p>
+
+<h2>Why?</h2>
+
+<p>I'm with defunkt when he says:</p>
+
+<blockquote><p>I like writing Ruby. I like writing HTML. I like writing JavaScript.</p>
+
+<p>I don't like writing ERB, Haml, Liquid, Django Templates, putting Ruby
+in my HTML, or putting JavaScript in my HTML.</p></blockquote>
+
+<p>I thought Mustache was quite interesting when I saw it. However, I have to
+ammend the quote above, and say that "I'm not sure that I like writing mustache" either.</p>
+
+<p>Some of the things I did not like about Mustache were:</p>
+
+<h3>1. The same block tag for conditionals and loops</h3>
+
+<p>It's an interesting idea, but it makes understanding the intent of a
+template difficult. You have to understand what the variable is returning,
+(Is it a list? or a boolean?) to understand how the template will render.
+Having different tags for conditionals and loops makes the intent clear.</p>
+
+<h3>2. No logic in the templates. none.</h3>
+
+<p>This is a great principle, but not very pragmatic. Specifically, it requires
+writing code such as:</p>
+
+<pre><code>def no_next_hurl_and_anonymous
+  no_next_hurl &amp;&amp; !logged_in?
+end
+
+{{# no_nex_hurl_and_anonymous}}
+  &lt;a href="/" style="display:none;" id="page-next" title="next"&gt;&amp;rang;&lt;/a&gt;
+{{/ no_next_hurl_and_anonymous }}
+</code></pre>
+
+<p>when that check would be simpler and more clear if written in the template
+itself.</p>
+
+<h3>3. Pulling in locals and instance methods from your controllers</h3>
+
+<p>This has been a pet peeve of mine from back in the Rails 1.0 days, and I'm
+disgruntled to see that persisting with modern Sinatra apps. I think the
+alternative I'm proposing in Balbo is better. A lookup stack that data can
+be pushed onto, and passing data directly to the template.</p>
+
+<h3>Other changes</h3>
+
+<p>Since I was making sweeping changes to Mustache, I decided to incorporate
+other changes, and not be limited to the goals of Mustache (such as
+remaining somewhat compatible with ctemplate et al.) Therefore, I've
+also made changes, such as:</p>
+
+<ul>
+<li>Use tag names instead of characters, and one brace instead of two.</li>
+<li><p>Closing tags do not need to match the opening tag exactly.</p>
+
+<p>{if check}My template{/if}   instead of
+{# check}My tempalate{/# check}</p></li>
+</ul>
+
+
+<h3>Inspiration from Django</h3>
+
+<p>The template system of content blocks and inheritance is a powerful one.
+I've integrated it into Balbo.</p>
+
+<h2>Overview</h2>
+
+<p>A Balbo view consists of traditional template. Any logic, modules, etc. are
+pushed onto the context in your app. The only logic allowed in the
+template itself are in the conditional statements.</p>
+
+<h2>Usage</h2>
+
+<p>Quick example:</p>
+
+<pre><code>&gt;&gt; require 'balbo'
+=&gt; true
+&gt;&gt; Balbo::Template.new("Hello {{planet}}").render({:planet =&gt; "World!"})
+=&gt; "Hello World!"
+</code></pre>
+
+<p>We've got an <code>examples</code> folder but here's the canonical one:</p>
+
+<pre><code>class Simple
+  def name
+    "Chris"
+  end
+
+  def value
+    10_000
+  end
+
+  def taxed_value
+    value - (value * 0.4)
+  end
+
+  def in_ca
+    true
+  end
+end
+</code></pre>
+
+<p>We have a class that we want to reference in our template. Some methods
+reference others, some return values, some return only booleans.</p>
+
+<p>Now let's write the template:</p>
+
+<pre><code>Hello {{name}}
+You have just won ${{value}}!
+{if in_ca }
+Well, ${{taxed_value}}, after taxes.
+{/if in_ca}
+</code></pre>
+
+<p>This template references the object we will put into the lookup context.
+Here's the code to render actual HTML;</p>
+
+<pre><code>Balbo.render('simple', Simple.new)
+</code></pre>
+
+<p>Which returns the following:</p>
+
+<pre><code>Hello Chris
+You have just won $10000!
+Well, $6000.0, after taxes.
+</code></pre>
+
+<p>Simple.</p>
+
+<h2>Tag Types</h2>
+
+<p>Tags are indicated by braces, either double (or triple) braces for variables, or an opening brace and tag name. <code>{{name}}</code> and <code>{loop }</code> are tags. Let's
+talk about the different types of tags.</p>
+
+<h3>Variables</h3>
+
+<p>The most basic tag is the variable. A <code>{{name}}</code> tag in a basic
+template will try to lookup the <code>name</code> method in the lookup context. It will
+start from the top of the stack and check if <code>name</code> exists, either as a
+method or a hash key. If it does not exist, it will search down the context
+stack. If it reaches the bottom of the context stack without finding
+<code>name</code>, and empty string will be returned.</p>
+
+<p>All variables are HTML escaped by default. If you want to return
+unescaped HTML, use the triple mustache: <code>{{{name}}}</code>.</p>
+
+<p>By default a variable "miss" returns an empty string. You can
+configure this by setting <code>Mustache.raise_on_context_miss</code> to true.</p>
+
+<h3>if/esle</h3>
+
+<p>The conditional statement will be <code>eval</code>'d in the context of the
+template context. If it evaluates to something other than false, nil or
+an empty string (unlike ruby, we evaluate an empty string to false, since
+the default context lookup of a missing variable returns an empty string) then the template between the {if} and the {/if} (or {/else}) will be rendered.</p>
+
+<p>An <code>{else}</code> tag is optional:</p>
+
+<pre><code>{if link == "/about" }
+  &lt;h1&gt;About Us&lt;/h1&gt;
+{else}
+  &lt;h1&gt;Something Else&lt;/h1&gt;
+{/if}
+</code></pre>
+
+<h3>loop</h3>
+
+<p>The loop tag lets you loop over a sequence. It expects an iterable to be
+returned. Each item is popped onto the context.</p>
+
+<p>For example, imagine this template:</p>
+
+<pre><code>{loop repo}
+  &lt;b&gt;{{name}}&lt;/b&gt;
+{/loop}
+</code></pre>
+
+<p>And this view code:</p>
+
+<pre><code>def repo
+  Repository.all.map { |r| { :name =&gt; r.to_s } }
+end
+</code></pre>
+
+<p>When rendered, our view will contain a list of all repository names in
+the database.</p>
+
+<h3>include</h3>
+
+<p>You can include a template into the current template with the include tag.
+The current context is used for rendering the included template.</p>
+
+<pre><code>{include subtemplate }
+</code></pre>
+
+<h3>extends</h3>
+
+<p>Template inheritance lets you define a base template that you can then
+override in the child templates. Extends is the tag to define the parent
+template.</p>
+
+<pre><code>{extends layout }
+</code></pre>
+
+<h3>block</h3>
+
+<p>Block sections define an overridable content area. So, a layout can define default content for a block, which is then overrided by the rendered
+template.</p>
+
+<p>For example, given this file layout.balbo:</p>
+
+<pre><code>{block header}
+  &lt;h1&gt;Layout Title&lt;/h1&gt;
+{/block}
+</code></pre>
+
+<p>With this template:</p>
+
+<pre><code>{extends layout}
+{block header}
+  &lt;h1&gt;This is my header&lt;/h1&gt;
+{/block}
+</code></pre>
+
+<p>Would render:</p>
+
+<pre><code>&lt;h1&gt;This is my header&lt;/h1&gt;
+</code></pre>
+
+<h3>Comments</h3>
+
+<p>Comments begin with a # and are ignored. The following template:</p>
+
+<pre><code>&lt;h1&gt;Today{# ignore me }.&lt;/h1&gt;
+</code></pre>
+
+<p>Will render as follows:</p>
+
+<pre><code>&lt;h1&gt;Today.&lt;/h1&gt;
+</code></pre>
+
+<h2>Templates</h2>
+
+<p>You can set the search path using <code>Balbo.template_path</code>.</p>
+
+<pre><code>Balbo.template_path = File.dirname(__FILE__)
+</code></pre>
+
+<p>Balbo also allows you to define the extension it'll use with
+<code>Balbo.template_extension</code>.</p>
+
+<pre><code>Balbo.template_extension = 'html'
+</code></pre>
+
+<h2>Views</h2>
+
+<p>Mustache supports a bit of magic when it comes to views. If you're
+authoring a plugin or extension for a web framework (Sinatra, Rails,
+etc), check out the <code>view_namespace</code> and <code>view_path</code> settings on the
+<code>Mustache</code> class. They will surely provide needed assistance.</p>
+
+<h2>Helpers</h2>
+
+<p>The sinatra integration provides a helper method for adding items to the
+lookup context. Add any helpers you want accessible in your views
+there.</p>
+
+<p>For Example:</p>
+
+<pre><code>module ViewHelpers
+  def gravatar(email, size = 30)
+    gravatar_id = Digest::MD5.hexdigest(email.to_s.strip.downcase)
+    gravatar_for_id(gravatar_id, size)
+  end
+
+  def gravatar_for_id(gid, size = 30)
+    "#{gravatar_host}/avatar/#{gid}?s=#{size}"
+  end
+
+  def gravatar_host
+    @ssl ? 'https://secure.gravatar.com' : 'http://www.gravatar.com'
+  end
+end
+</code></pre>
+
+<p>Then just include it:</p>
+
+<pre><code>class GlobalHelpers
+  include ViewHelpers
+  def initialize(ssl = false)
+    @ssl = ssl
+  end
+end
+
+class App &lt; Sinatra::Default
+  register Balbo::Sinatra
+
+  before do
+    context GlobalHelpers.new()
+  end
+end
+</code></pre>
+
+<p>This is just ruby, so you can set up your context as you need it.</p>
+
+<h2>Sinatra</h2>
+
+<p>Balbo ships with Sinatra integration. You can see the example sinatra
+app in examples/app.</p>
+
+<p>Document the View module integration here.</p>
+
+<h2>Installation</h2>
+
+<h3><a href="http://gemcutter.org/">Gemcutter</a></h3>
+
+<pre><code>$ gem install balbo
+</code></pre>
+
+<h2>Acknowledgements</h2>
+
+<p>Thanks to <a href="http://github.com/defunkt">Chris Wanstrath</a> for mustache.</p>
+
+<h2>Meta</h2>
+
+<ul>
+<li>Code: <code>git clone git://github.com/wvl/balbo.git</code></li>
+<li>Home: <a href="http://github.com/wvl/balbo">http://github.com/wvl/balbo</a></li>
+</ul>
+
+<script type="text/javascript">$(function() {
+  $('a').each(function() { $(this).attr('target', '_blank') })
+})</script>
+
+    </div>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+    </div>
+  </body>
+</html>
