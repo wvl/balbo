@@ -9,7 +9,6 @@ module TestViews
   end
 end
 
-
 if $0 == __FILE__
   puts Balbo.render('namespaced', TestViews::Namespaced.new, File.dirname(__FILE__))
 end

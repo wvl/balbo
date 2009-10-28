@@ -1,3 +1,14 @@
+## 0.4.2 (2009-??-??)
+
+* Bugfix: Ignore bad constant names when autoloading
+
+## 0.4.1 (2009-10-27)
+
+* Partials now respect the `view_namespace` setting.
+* Added tpl-mode.el to contrib/ for us Emacs users.
+* Rack::Bug bugfix: ensure benchmark is required before using it
+* Rack::Bug: truncate too-large variables (click expands them)
+
 ## 0.4.0 (2009-10-27)
 
 * Stopped raising context miss exceptions by default
