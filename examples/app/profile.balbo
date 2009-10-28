@@ -3,5 +3,12 @@
 <div class="span-6">
   <h3>{{ name }}</h3>
   <p>{{ email }}</p>
+  {if admin}<p>This user is an admin</p>{/if}
 </div>
 {/block }
+
+{block menu}
+<ul>
+  <li><a href="/">Back to Home</a></li>
+</ul>
+{/block}
