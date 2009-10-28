@@ -1,9 +1,5 @@
 require File.dirname(__FILE__)+'/spec_helper'
 
-def t(s)
-  Balbo::Template.new(s, File.dirname(__FILE__))
-end
-
 describe "Template tokenize" do  
   {
     "Hello World" => [[:text, "Hello World"]],

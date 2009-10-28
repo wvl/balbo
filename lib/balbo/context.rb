@@ -9,12 +9,31 @@ module Balbo
   # By default it is not raised. See Mustache.raise_on_context_miss.
   class ContextMiss < RuntimeError;  end
 
+  class BlankSlate
+    instance_methods.each { |m| undef_method m unless m =~ /^__/ }
+  end
+  
+  class Proxy < BlankSlate
+    def initialize(context)
+      @context = context
+    end
+    
+    def _eval(source)
+      eval(source)
+    end
+      
+    def method_missing(sym, *args, &block)
+      @context.resolve(sym)
+    end
+  end
+    
+  
+    
   # A Context represents the context which a Mustache template is
   # executed within. All Mustache tags reference keys in the Context.
   class Context
     def initialize(initial={})
       @stack = [initial]
-      @raise_on_context_miss = false
     end
     
     def push(hash)
@@ -27,6 +46,10 @@ module Balbo
       self
     end
     
+    def top
+      @stack.last
+    end
+    
     def [](name)
       @stack.reverse_each do |hash|
         if hash.respond_to?(:has_key?) && hash.has_key?(name)
@@ -37,7 +60,9 @@ module Balbo
           return hash.send(name)
         end
       end
-      raise ContextMiss.new("Can't find #{name} in #{self.inspect}") if  @raise_on_context_miss
+      if Balbo.raise_on_context_miss?
+        raise ContextMiss.new("Can't find #{name} in #{self.inspect}")
+      end
       ""
     end
     
@@ -59,7 +84,9 @@ module Balbo
     end
     
     def evaluate(source)
-      eval(source)
+      Proxy.new(self)._eval(source)
+#       require 'ruby-debug'; debugger if source=="t"
+      #eval(source)
     end
     
     def method_missing(key, *args)

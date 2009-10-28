@@ -1,6 +1,12 @@
 require 'cgi'
 
 module Balbo
+  #
+  # Variable tag
+  #   {{ var }}
+  #   {{ user.name }}
+  #   {{{ not_escaped }}}
+  #
   class Var
     def initialize(arglist, escaped=true)
       @var = arglist
@@ -13,6 +19,11 @@ module Balbo
     end
   end
   
+  # If
+  # 
+  #    {if user.email == 'test@example.com' }
+  #    {else}
+  #    {/if}
   class If
     def initialize(data, template)
       @var = data
@@ -38,6 +49,11 @@ module Balbo
     end
   end
   
+  # Loop
+  #
+  #    {loop iterable}
+  #    {/loop}
+  #
   class Loop
     def initialize(data, template)
       @var = data
@@ -45,7 +61,7 @@ module Balbo
     end
     
     def render(context)
-      iterable = context.resolve(@var)
+      iterable = @var.empty? ? context.top : context.resolve(@var)
       length = 0
 
       if iterable.respond_to?(:each)
@@ -65,6 +81,8 @@ module Balbo
     end
   end
   
+  # include
+  #    {include subtemplate}
   class Include
     def initialize(data, template)
       @nodes = template.load(data)
@@ -75,6 +93,13 @@ module Balbo
     end
   end
   
+  # extends provides a method of template inheritance.
+  # The extends tag should be at the top of your template.
+  # Any blocks in the parent template will be overriden by the
+  # blocks in the current template.
+  # 
+  #    {extends parent}
+  #
   class Extends
     def initialize(data, template)
       @nodes = template.load(data).compile
@@ -86,6 +111,12 @@ module Balbo
     end
   end
   
+  # block 
+  #
+  #    {extends parent}
+  #    {block main}
+  #      <h1>Override the main block in the parent template</h1>
+  #    {/block}
   class Block
     def initialize(data, template)
       @name = data

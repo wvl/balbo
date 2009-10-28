@@ -1,7 +1,7 @@
-{if t}
+{if truth_check}
   * first
 {/if }
   * {{two}}
-{if t}
+{if truth_check}
   * third
-{/if t}
+{/if }

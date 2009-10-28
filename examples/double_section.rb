@@ -3,7 +3,7 @@ require 'balbo'
 
 class DoubleSection
   
-  def t
+  def truth_check
     true
   end
 

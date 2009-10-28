@@ -1,54 +1,93 @@
-Mustache
-=========
+Balbo
+=====
 
-Inspired by [ctemplate][1] and [et][2], Mustache is a
-framework-agnostic way to render logic-free views.
-
-As ctemplates says, "It emphasizes separating logic from presentation:
-it is impossible to embed application logic in this template language."
-
-
-Overview
---------
-
-Think of Mustache as a replacement for your views. Instead of views
-consisting of ERB or HAML with random helpers and arbitrary logic,
-your views are broken into two parts: a Ruby class and an HTML
-template.
-
-We call the Ruby class the "view" and the HTML template the
-"template."
-
-All your logic, decisions, and code is contained in your view. All
-your markup is contained in your template. The template does nothing
-but reference methods in your view.
-
-This strict separation makes it easier to write clean templates,
-easier to test your views, and more fun to work on your app's front end.
-
+Balbo, is a fork and almost complete rewrite of [Mustache][1]. It attempts
+to take the best aspects of Mustache, Django Templates, and ERB, and mash 
+them together.
 
 Why?
 ----
 
-I like writing Ruby. I like writing HTML. I like writing JavaScript.
+I'm with defunkt when he says:
 
-I don't like writing ERB, Haml, Liquid, Django Templates, putting Ruby
-in my HTML, or putting JavaScript in my HTML.
+> I like writing Ruby. I like writing HTML. I like writing JavaScript.
+>
+> I don't like writing ERB, Haml, Liquid, Django Templates, putting Ruby
+> in my HTML, or putting JavaScript in my HTML.
 
+I thought Mustache was quite interesting when I saw it. However, I have to 
+ammend the quote above, and say that "I don't like writing mustache" either.
+
+Some of the things I did not like about Mustache were:
+
+### 1. The same block tag for conditionals and loops
+
+It's an interesting idea, but it makes understanding the intent of a
+template difficult. You have to understand what the variable is returning,
+(Is it a list? or a boolean?) to understand how the template will render.
+Having different tags for conditionals and loops makes the intent clear.
+
+### 2. No logic in the templates. none.
+
+This is a great principle, but not very pragmatic. Specifically, it requires
+writing code such as:
+
+    def no_next_hurl_and_anonymous
+      no_next_hurl && !logged_in?
+    end
+    
+    {{# no_nex_hurl_and_anonymous}}
+      <a href="/" style="display:none;" id="page-next" title="next">&rang;</a>
+    {{/ no_next_hurl_and_anonymous }}
+
+when that check would be simpler and more clear if written in the template
+itself.
+
+### 3. Pulling in locals and instance methods from your controllers
+
+This has been a pet peeve of mine from back in the Rails 1.0 days, and I'm
+disgruntled to see that persisting with modern Sinatra apps. I think the 
+alternative I'm proposing in Balbo is better. A lookup stack that data can
+be pushed onto, and passing data directly to the template.
+
+### Other changes
+
+Since I was making sweeping changes to Mustache, I decided to incorporate
+other changes, and not be limited to the goals of Mustache (such as 
+remaining somewhat compatible with ctemplate et al.) Therefore, I've
+also made changes, such as:
+
+* Use tag names instead of characters, and one brace instead of two.
+* Closing tags do not need to match the opening tag exactly.
+
+    {if check}My template{/if}   instead of
+    {# check}My tempalate{/# check}
+
+### Inspiration from Django
+
+The template system of content blocks and inheritance is a powerful one.
+I've integrated it into Balbo.
+
+Overview
+--------
+
+A Balbo view consists of traditional template. Any logic, modules, etc. are
+pushed onto the context in your app. The only logic allowed in the 
+template itself are in the conditional statements.
 
 Usage
 -----
 
 Quick example:
 
-    >> require 'mustache'
+    >> require 'balbo'
     => true
-    >> Mustache.render("Hello {{planet}}", :planet => "World!")
+    >> Balbo::Template.new("Hello {{planet}}").render({:planet => "World!"})
     => "Hello World!"
 
 We've got an `examples` folder but here's the canonical one:
 
-    class Simple < Mustache
+    class Simple
       def name
         "Chris"
       end
@@ -66,21 +105,21 @@ We've got an `examples` folder but here's the canonical one:
       end
     end
 
-We simply create a normal Ruby class and define methods. Some methods
+We have a class that we want to reference in our template. Some methods
 reference others, some return values, some return only booleans.
 
 Now let's write the template:
 
     Hello {{name}}
     You have just won ${{value}}!
-    {{#in_ca}}
+    {if in_ca }
     Well, ${{taxed_value}}, after taxes.
-    {{/in_ca}}
+    {/if in_ca}
 
-This template references our view methods. To bring it all together,
-here's the code to render actual HTML;
+This template references the object we will put into the lookup context.
+Here's the code to render actual HTML;
 
-    Simple.render
+    Balbo.render('simple', Simple.new)
 
 Which returns the following:
 
@@ -94,14 +133,17 @@ Simple.
 Tag Types
 ---------
 
-Tags are indicated by the double mustaches. `{{name}}` is a tag. Let's
+Tags are indicated by braces, either double (or triple) braces for variables, or an opening brace and tag name. `{{name}}` and `{loop }` are tags. Let's
 talk about the different types of tags.
 
 ### Variables
 
 The most basic tag is the variable. A `{{name}}` tag in a basic
-template will try to call the `name` method on your view. If there is
-no `name` method, an exception will be raised.
+template will try to lookup the `name` method in the lookup context. It will
+start from the top of the stack and check if `name` exists, either as a 
+method or a hash key. If it does not exist, it will search down the context
+stack. If it reaches the bottom of the context stack without finding 
+`name`, and empty string will be returned.
 
 All variables are HTML escaped by default. If you want to return
 unescaped HTML, use the triple mustache: `{{{name}}}`.
@@ -109,33 +151,31 @@ unescaped HTML, use the triple mustache: `{{{name}}}`.
 By default a variable "miss" returns an empty string. You can
 configure this by setting `Mustache.raise_on_context_miss` to true.
 
-### Boolean Sections
+### if/esle
 
-A section begins with a pound and ends with a slash. That is,
-`{{#person}}` begins a "person" section while `{{/person}}` ends it.
+The conditional statement will be `eval`'d in the context of the 
+template context. If it evaluates to something other than false, nil or
+an empty string (unlike ruby, we evaluate an empty string to false, since
+the default context lookup of a missing variable returns an empty string) then the template between the {if} and the {/if} (or {/else}) will be rendered.
 
-If the `person` method exists and calling it returns false, the HTML
-between the pound and slash will not be displayed.
+An `{else}` tag is optional:
 
-If the `person` method exists and calling it returns true, the HTML
-between the pound and slash will be rendered and displayed.
+  {if link == "/about" }
+    <h1>About Us</h1>
+  {else}
+    <h1>Something Else</h1>
+  {/if}
 
-### Enumerable Sections
+### loop
 
-Enumerable sections are syntactically identical to boolean sections in
-that they begin with a pound and end with a slash. The difference,
-however, is in the view: if the method called returns an enumerable,
-the section is repeated as the enumerable is iterated over.
-
-Each item in the enumerable is expected to be a hash which will then
-become the context of the corresponding iteration. In this way we can
-construct loops.
+The loop tag lets you loop over a sequence. It expects an iterable to be
+returned. Each item is popped onto the context.
 
 For example, imagine this template:
 
-    {{#repo}}
+    {loop repo}
       <b>{{name}}</b>
-    {{/repo}}
+    {/loop}
 
 And this view code:
 
@@ -146,66 +186,40 @@ And this view code:
 When rendered, our view will contain a list of all repository names in
 the database.
 
-As a convenience, if a section returns a hash (as opposed to an array
-or a boolean) it will be treated as a single item array.
+### include
 
-With the above template, we could use this Ruby code for a single
-iteration:
+You can include a template into the current template with the include tag.
+The current context is used for rendering the included template.
 
-    def repo
-      { :name => Repository.first.to_s }
-    end
-
-This would be treated by Mustache as functionally equivalent to the
-following:
-
-    def repo
-      [ { :name => Repository.first.to_s } ]
-    end
+    {include subtemplate }
 
 
+### extends
 
-### Extends
+Template inheritance lets you define a base template that you can then 
+override in the child templates. Extends is the tag to define the parent
+template.
 
-Each stache must define its own inheritance heirarchy. It does this with the 'extends' section command.
-
-    {{^ layout }}
-    <h1>Default content</h1>
-    {{/ layout }}
-
-and layout.mustache:
-
-    {{& yield }}
-    {{/ yield }}
-
-This way, you could do things like:
-
-    {{^header}}
-      {{&title}}This is my title{{/title}}
-      {{&css}}<link rel="stylesheet" ..>{{/css}}
-    {{/header}}
-    <h1>Content</h1>
-    {{^footer}}
-    {{/footer}}
+    {extends layout }
 
 
-### Block Sections
+### block
 
-Block sections define an overridable content area. So, a layout can define default content for a block, which is then overrided by the specific stache.
+Block sections define an overridable content area. So, a layout can define default content for a block, which is then overrided by the rendered 
+template.
 
-For example, this layout.mustache:
+For example, given this file layout.balbo:
 
-    {{&header}}
+    {block header}
       <h1>Layout Title</h1>
-    {{/header}}
+    {/block}
 
-With this stache:
+With this template:
 
-    {{^layout}}
-    {{&header}}
+    {extends layout}
+    {block header}
       <h1>This is my header</h1>
-    {{/header}}
-    {{/layout}}
+    {/block}
 
 Would render:
 
@@ -213,127 +227,31 @@ Would render:
 
 ### Comments
 
-Comments begin with a bang and are ignored. The following template:
+Comments begin with a # and are ignored. The following template:
 
-    <h1>Today{{! ignore me }}.</h1>
+    <h1>Today{# ignore me }.</h1>
 
 Will render as follows:
 
     <h1>Today.</h1>
 
-### Partials
-
-Partials begin with a less than sign, like `{{< box}}`.
-
-If a partial's view is loaded, we use that to render the HTML. If
-nothing is loaded we render the template directly using our current context.
-
-In this way partials can reference variables or sections the calling
-view defines.
-
-
-### Set Delimiter
-
-Set Delimiter tags start with an equal sign and change the tag
-delimiters from {{ and }} to custom strings.
-
-Consider the following contrived example:
-
-    * {{ default_tags }}
-    {{=<% %>=}}
-    * <% erb_style_tags %>
-    <%={{ }}=%>
-    * {{ default_tags_again }}
-
-Here we have a list with three items. The first item uses the default
-tag style, the second uses erb style as defined by the Set Delimiter
-tag, and the third returns to the default style after yet another Set
-Delimiter declaration.
-
-According to [ctemplates][3], this "is useful for languages like TeX, where
-double-braces may occur in the text and are awkward to use for
-markup."
-
-Custom delimiters may not contain whitespace or the equals sign.
-
-
-Dict-Style Views
-----------------
-
-ctemplate and friends want you to hand a dictionary to the template
-processor. Mustache supports a similar concept. Feel free to mix the
-class-based and this more procedural style at your leisure.
-
-Given this template (winner.mustache):
-
-    Hello {{name}}
-    You have just won ${{value}}!
-
-We can fill in the values at will:
-
-    view = Winner.new
-    view[:name] = 'George'
-    view[:value] = 100
-    view.render
-
-Which returns:
-
-    Hello George
-    You have just won $100!
-
-We can re-use the same object, too:
-
-    view[:name] = 'Tony'
-    view.render
-    Hello Tony
-    You have just won $100!
-
 
 Templates
 ---------
 
-A word on templates. By default, a view will try to find its template
-on disk by searching for an HTML file in the current directory that
-follows the classic Ruby naming convention.
+You can set the search path using `Balbo.template_path`.
 
-    TemplatePartial => ./template_partial.mustache
+    Balbo.template_path = File.dirname(__FILE__)
 
-You can set the search path using `Mustache.template_path`. It can be set on a
-class by class basis:
+Balbo also allows you to define the extension it'll use with 
+`Balbo.template_extension`.
 
-    class Simple < Mustache
-      self.template_path = File.dirname(__FILE__)
-      ... etc ...
-    end
-
-Now `Simple` will look for `simple.mustache` in the directory it resides
-in, no matter the cwd.
-
-If you want to just change what template is used you can set
-`Mustache.template_file` directly:
-
-    Simple.template_file = './blah.mustache'
-
-Mustache also allows you to define the extension it'll use.
-
-    Simple.template_extension = 'xml'
-
-Given all other defaults, the above line will cause Mustache to look
-for './blah.xml'
-
-Feel free to set the template directly:
-
-    Simple.template = 'Hi {{person}}!'
-
-Or set a different template for a single instance:
-
-    Simple.new.template = 'Hi {{person}}!'
-
-Whatever works.
+    Balbo.template_extension = 'html'
 
 
 Views
 -----
+
 
 Mustache supports a bit of magic when it comes to views. If you're
 authoring a plugin or extension for a web framework (Sinatra, Rails,
@@ -344,10 +262,11 @@ etc), check out the `view_namespace` and `view_path` settings on the
 Helpers
 -------
 
-What about global helpers? Maybe you have a nifty `gravatar` function
-you want to use in all your views? No problem.
+The sinatra integration provides a helper method for adding items to the
+lookup context. Add any helpers you want accessible in your views
+there.
 
-This is just Ruby, after all.
+For Example:
 
     module ViewHelpers
       def gravatar(email, size = 30)
@@ -366,60 +285,31 @@ This is just Ruby, after all.
 
 Then just include it:
 
-    class Simple < Mustache
+    class GlobalHelpers
       include ViewHelpers
-
-      def name
-        "Chris"
-      end
-
-      def value
-        10_000
-      end
-
-      def taxed_value
-        value - (value * 0.4)
-      end
-
-      def in_ca
-        true
-      end
-    end
-
-Great, but what about that `@ssl` ivar in `gravatar_host`? There are
-many ways we can go about setting it.
-
-Here's on example which illustrates a key feature of Mustache: you
-are free to use the `initialize` method just as you would in any
-normal class.
-
-    class Simple < Mustache
-      include ViewHelpers
-
       def initialize(ssl = false)
         @ssl = ssl
       end
-
-      ... etc ...
+    end
+    
+    class App < Sinatra::Default
+      register Balbo::Sinatra
+    
+      before do
+        context GlobalHelpers.new()
+      end
     end
 
-Now:
-
-    Simple.new(request.ssl?).render
-
-Convoluted but you get the idea.
+This is just ruby, so you can set up your context as you need it.
 
 
 Sinatra
 -------
 
-Mustache ships with Sinatra integration. Please see
-`lib/mustache/sinatra.rb` or
-<http://defunkt.github.com/mustache/classes/Mustache/Sinatra.html> for
-complete documentation.
+Balbo ships with Sinatra integration. You can see the example sinatra
+app in examples/app.
 
-An example Sinatra application is also provided:
-<http://github.com/defunkt/mustache-sinatra-example>
+Document the View module integration here.
 
 
 [Rack::Bug][4]
@@ -437,13 +327,6 @@ Using Rails? Add this to your initializer or environment file:
     config.middleware.use "Rack::Bug::MustachePanel"
 
 [![Rack::Bug](http://img.skitch.com/20091027-xyf4h1yxnefpp7usyddrcmc7dn.png)][5]
-
-
-Vim
----
-
-Thanks to [Juvenn Woo](http://github.com/juvenn) for mustache.vim. It
-is included under the contrib/ directory.
 
 
 Installation
@@ -477,7 +360,8 @@ Meta
 * Gems: <http://gemcutter.org/gems/mustache>
 * Boss: Chris Wanstrath :: <http://github.com/defunkt>
 
-[1]: http://code.google.com/p/google-ctemplate/
+[1]: http://github.com/defunkt/mustache
+[2]: http://code.google.com/p/google-ctemplate/
 [2]: http://www.ivan.fomichev.name/2008/05/erlang-template-engine-prototype.html
 [3]: http://google-ctemplate.googlecode.com/svn/trunk/doc/howto.html
 [4]: http://github.com/brynary/rack-bug/

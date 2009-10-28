@@ -14,6 +14,20 @@ module Balbo
     @template = nil
   end
 
+  # Should an exception be raised when we cannot find a corresponding method
+  # or key in the current context? By default this is false to emulate ctemplate's
+  # behavior, but it may be useful to enable when debugging or developing.
+  #
+  # If set to true and there is a context miss, `Mustache::ContextMiss` will
+  # be raised.
+  def self.raise_on_context_miss?
+    @raise_on_context_miss ||= false
+  end
+
+  def self.raise_on_context_miss=(boolean)
+    @raise_on_context_miss = boolean
+  end
+
   # Helper method for loading and rendering a balbo template
   def self.render(template, context, path=self.template_path, extension='balbo')
     Balbo::Template.load(template, path, extension).render(context)
