@@ -16,7 +16,7 @@ I'm with defunkt when he says:
 > in my HTML, or putting JavaScript in my HTML.
 
 I thought Mustache was quite interesting when I saw it. However, I have to 
-ammend the quote above, and say that "I don't like writing mustache" either.
+ammend the quote above, and say that "I'm not sure that I like writing mustache" either.
 
 Some of the things I did not like about Mustache were:
 
@@ -160,11 +160,11 @@ the default context lookup of a missing variable returns an empty string) then t
 
 An `{else}` tag is optional:
 
-  {if link == "/about" }
-    <h1>About Us</h1>
-  {else}
-    <h1>Something Else</h1>
-  {/if}
+    {if link == "/about" }
+      <h1>About Us</h1>
+    {else}
+      <h1>Something Else</h1>
+    {/if}
 
 ### loop
 
@@ -310,15 +310,6 @@ Balbo ships with Sinatra integration. You can see the example sinatra
 app in examples/app.
 
 Document the View module integration here.
-
-
-
-Emacs
-----
-
-tpl-mode.el is included under the contrib/ directory for any Emacs users.
-Based on Google's tpl-mode for ctemplates, it adds support for Mustache's
-more lenient tag values and includes a few commands for your editing pleasure.
 
 
 Installation
