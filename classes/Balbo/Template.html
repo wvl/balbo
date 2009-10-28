@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Balbo::Template</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+    <script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>     
+    <div class="banner">
+        <h1>
+            <span class="type">Class</span> 
+            Balbo::Template 
+            
+                <span class="parent">&lt; 
+                    
+                    <a href="../Object.html">Object</a>
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../files/lib/balbo/template_rb.html">lib/balbo/template.rb</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+    
+    <div class="description">
+        <p>
+A <a href="Template.html">Template</a> is the main <a
+href="../Balbo.html">Balbo</a> template
+</p>
+<p>
+A template gets rendered by:
+</p>
+<pre>
+ 1. Tokenizing the text stream, into atoms
+ 2. Compiling the atoms into an array of blocks (nodes).
+ 3. These nodes are then given a context of data, which transforms the template into
+    its output text.
+</pre>
+
+    </div>
+    
+
+    
+
+    
+    
+
+    
+    
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+    
+        <dt>B</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000031">blocks</a>,</li>
+                
+                <li><a href="#M000032">blocks=</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>C</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000038">compile</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>L</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000028">load</a>,</li>
+                
+                <li><a href="#M000033">load</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>N</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000030">new</a>,</li>
+                
+                <li><a href="#M000034">nodelist</a>,</li>
+                
+                <li><a href="#M000037">nodes</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>R</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000039">render</a></li>
+                
+            </ul>
+        </dd>
+    
+        <dt>T</dt>
+        <dd>
+            <ul>
+                
+                <li><a href="#M000040">tokenize</a>,</li>
+                
+                <li><a href="#M000036">tokens</a></li>
+                
+            </ul>
+        </dd>
+    
+    </dl>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="sectiontitle">Constants</div>
+    <table border='0' cellpadding='5'>
+        
+        <tr valign='top'>
+            <td class="attr-name">TAGS</td>
+            <td>=</td>
+            <td class="attr-value">{       :text =&gt; lambda { |token, data, t| data },       :var =&gt; lambda { |token, data, t| Var.new(data) },       :unvar =&gt; lambda { |token, data, t| Var.new(data, false) },       :if =&gt; lambda { |token, data, t| If.new(data, t) },       :loop =&gt; lambda { |token, data, t| Loop.new(data, t) },       :include =&gt; lambda { |token, data, t| Include.new(data, t) },       :extends =&gt; lambda { |token, data, t| Extends.new(data, t) },       :block =&gt; lambda { |token, data, t| Block.new(data, t) },       :comment =&gt; lambda { |to,d,t| &quot;&quot;}</td>
+        </tr>
+        
+        
+    </table>
+    
+
+    
+
+    
+            <div class="sectiontitle">Class Public methods</div>
+            
+            <div class="method">
+                <div class="title" id="M000028">
+                    
+                    <a name="M000028"></a><b>load</b>(name, template_path='.', template_extension='balbo')
+                    
+                </div>
+                
+                <div class="description">
+                  <p>
+Load and instantiate a balbo template
+</p>
+
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000028_source')" id="l_M000028_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L12" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000028_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 12</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">template_path</span>=<span class="ruby-value str">'.'</span>, <span class="ruby-identifier">template_extension</span>=<span class="ruby-value str">'balbo'</span>)
+      <span class="ruby-identifier">new</span>(<span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-node">&quot;#{template_path}/#{name}.#{template_extension}&quot;</span>), 
+        <span class="ruby-identifier">template_path</span>, <span class="ruby-identifier">template_extension</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000030">
+                    
+                    <a name="M000030"></a><b>new</b>(source=&quot;&quot;, template_path = '.', template_extension = 'balbo')
+                    
+                </div>
+                
+                <div class="description">
+                  <p>
+Expects a <a href="../Balbo.html">Balbo</a> template as a string along with
+a template path, which it uses to find parent and child templates
+(partials).
+</p>
+
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000030_source')" id="l_M000030_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L31" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000030_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 31</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">source</span>=<span class="ruby-value str">&quot;&quot;</span>, <span class="ruby-identifier">template_path</span> = <span class="ruby-value str">'.'</span>, <span class="ruby-identifier">template_extension</span> = <span class="ruby-value str">'balbo'</span>)
+      <span class="ruby-ivar">@source</span> = <span class="ruby-identifier">source</span>
+      <span class="ruby-ivar">@template_path</span> = <span class="ruby-identifier">template_path</span>
+      <span class="ruby-ivar">@template_extension</span> = <span class="ruby-identifier">template_extension</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="sectiontitle">Instance Public methods</div>
+            
+            <div class="method">
+                <div class="title" id="M000031">
+                    
+                    <a name="M000031"></a><b>blocks</b>()
+                    
+                </div>
+                
+                <div class="description">
+                  <p>
+A hash of {block names => nodes} is used for the inheritance hierarchy. The
+parent layout defines certain blocks, which the child layout then
+overrides.
+</p>
+
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000031_source')" id="l_M000031_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L39" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000031_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 39</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">blocks</span>
+      <span class="ruby-ivar">@blocks</span> <span class="ruby-operator">||=</span> {}
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000032">
+                    
+                    <a name="M000032"></a><b>blocks=</b>(blocks)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000032_source')" id="l_M000032_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L43" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000032_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 43</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">blocks=</span>(<span class="ruby-identifier">blocks</span>)
+      <span class="ruby-ivar">@blocks</span> = <span class="ruby-identifier">blocks</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000038">
+                    
+                    <a name="M000038"></a><b>compile</b>(tokens=tokens, &amp;block)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000038_source')" id="l_M000038_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L74" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000038_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 74</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">compile</span>(<span class="ruby-identifier">tokens</span>=<span class="ruby-identifier">tokens</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+      <span class="ruby-identifier">nodes</span> = []
+      <span class="ruby-keyword kw">while</span> <span class="ruby-operator">!</span><span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">empty?</span>
+        <span class="ruby-identifier">token</span>, <span class="ruby-identifier">data</span> = <span class="ruby-identifier">tokens</span>.<span class="ruby-identifier">shift</span>
+        <span class="ruby-identifier">nodes</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">TAGS</span>[<span class="ruby-identifier">token</span>].<span class="ruby-identifier">call</span>(<span class="ruby-identifier">token</span>, <span class="ruby-identifier">data</span>, <span class="ruby-keyword kw">self</span>) <span class="ruby-keyword kw">if</span> <span class="ruby-constant">TAGS</span>.<span class="ruby-identifier">has_key?</span>(<span class="ruby-identifier">token</span>)
+        <span class="ruby-keyword kw">break</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">block_given?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">call</span>(<span class="ruby-identifier">token</span>, <span class="ruby-identifier">data</span>)
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">nodelist</span>(<span class="ruby-identifier">nodes</span>)
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000033">
+                    
+                    <a name="M000033"></a><b>load</b>(name)
+                    
+                </div>
+                
+                <div class="description">
+                  <p>
+<a href="Include.html">Include</a> a sub template (partial) &#8212; the
+blocks hash stays the same for both templates
+</p>
+
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000033_source')" id="l_M000033_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L48" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000033_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 48</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">load</span>(<span class="ruby-identifier">name</span>)
+      <span class="ruby-identifier">newtemplate</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">class</span>.<span class="ruby-identifier">load</span>(<span class="ruby-identifier">name</span>, <span class="ruby-ivar">@template_path</span>, <span class="ruby-ivar">@template_extension</span>)
+      <span class="ruby-identifier">newtemplate</span>.<span class="ruby-identifier">blocks</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">blocks</span>
+      <span class="ruby-identifier">newtemplate</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000034">
+                    
+                    <a name="M000034"></a><b>nodelist</b>(nodes)
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000034_source')" id="l_M000034_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L54" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000034_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 54</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">nodelist</span>(<span class="ruby-identifier">nodes</span>)
+      <span class="ruby-comment cmt"># Define a render method on the array of nodes instance</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">nodes</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">context</span>=<span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>({}))
+        <span class="ruby-identifier">result</span> = <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">node</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> (<span class="ruby-identifier">node</span>.<span class="ruby-identifier">respond_to?</span>(<span class="ruby-identifier">:render</span>) <span class="ruby-operator">?</span> <span class="ruby-identifier">node</span>.<span class="ruby-identifier">render</span>(<span class="ruby-identifier">context</span>) <span class="ruby-operator">:</span> <span class="ruby-identifier">node</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">result</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">nodes</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000037">
+                    
+                    <a name="M000037"></a><b>nodes</b>()
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000037_source')" id="l_M000037_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L70" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000037_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 70</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">nodes</span>
+      <span class="ruby-ivar">@nodes</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">compile</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000039">
+                    
+                    <a name="M000039"></a><b>render</b>(context={})
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000039_source')" id="l_M000039_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L84" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000039_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 84</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">render</span>(<span class="ruby-identifier">context</span>={})
+      <span class="ruby-identifier">nodes</span>.<span class="ruby-identifier">render</span>(<span class="ruby-constant">Context</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">context</span>))
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000040">
+                    
+                    <a name="M000040"></a><b>tokenize</b>(source=@source)
+                    
+                </div>
+                
+                <div class="description">
+                  <p>
+Internal method &#8212; tokenize the source template
+</p>
+
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000040_source')" id="l_M000040_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L89" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000040_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 89</span>
+    <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">tokenize</span>(<span class="ruby-identifier">source</span>=<span class="ruby-ivar">@source</span>)
+      <span class="ruby-identifier">regex</span> = <span class="ruby-regexp re">/ \{\{(\{?)(.*?)\}?\}\} |                     # {{ var }}, or {{{ var }}} 1,2
+                \{(\#|if|else|loop|include|extends|block)(.*?)\}\s* |  # {if expression }  3,4
+                \{\/(if|loop|block)(.*?)\}\s*/</span><span class="ruby-identifier">xim</span>             <span class="ruby-comment cmt"># {/if closing expression } 5,6</span>
+      <span class="ruby-identifier">result</span> = []
+      <span class="ruby-identifier">text</span> = <span class="ruby-identifier">source</span>
+      <span class="ruby-keyword kw">while</span> <span class="ruby-identifier">text</span> <span class="ruby-operator">=~</span> <span class="ruby-identifier">regex</span>
+        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">:text</span>, <span class="ruby-identifier">$`</span>] <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">$`</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-comment cmt"># prematch</span>
+        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">:var</span>, <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">strip</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$2</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">$1</span> <span class="ruby-operator">!=</span> <span class="ruby-value str">&quot;{&quot;</span>
+        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">:unvar</span>, <span class="ruby-identifier">$2</span>.<span class="ruby-identifier">strip</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$2</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">$1</span><span class="ruby-operator">==</span><span class="ruby-value str">&quot;{&quot;</span>
+        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> [(<span class="ruby-identifier">$3</span><span class="ruby-operator">==</span><span class="ruby-value str">&quot;#&quot;</span> <span class="ruby-operator">?</span> <span class="ruby-identifier">:comment</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">$3</span>.<span class="ruby-identifier">to_sym</span>), <span class="ruby-identifier">$4</span>.<span class="ruby-identifier">strip</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$3</span>
+        <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-node">&quot;end#{$5}&quot;</span>.<span class="ruby-identifier">to_sym</span>, <span class="ruby-keyword kw">nil</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">$5</span>
+        <span class="ruby-identifier">text</span> = <span class="ruby-identifier">$'</span> <span class="ruby-comment cmt"># postmatch</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">result</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">:text</span>, <span class="ruby-identifier">text</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">not</span> <span class="ruby-identifier">text</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-identifier">result</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="method">
+                <div class="title" id="M000036">
+                    
+                    <a name="M000036"></a><b>tokens</b>()
+                    
+                </div>
+                
+                
+                
+                
+                <div class="sourcecode">
+                    <p class="source-link">
+                        Source: <a href="javascript:toggleSource('M000036_source')" id="l_M000036_source">show</a>
+                        
+                        | <a href="http://github.com/wvl/balbo/blob/9c83ed72ecb38388002fabd503bab9b9847cde3a/lib/balbo/template.rb#L66" target="_blank" class="github_url">on GitHub</a>
+                        
+                    </p>
+                    <div id="M000036_source" class="dyn-source">
+                        <pre><span class="ruby-comment cmt"># File lib/balbo/template.rb, line 66</span>
+    <span class="ruby-keyword kw">def</span>  <span class="ruby-identifier">tokens</span><span class="ruby-identifier">tokens</span>
+      <span class="ruby-ivar">@tokens</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">tokenize</span>
+    <span class="ruby-keyword kw">end</span></pre>
+                    </div>
+                </div>
+                
+            </div>
+            
+</div>
+    </div>
+  </body>
+</html>    

@@ -20,7 +20,7 @@
             
                 <span class="parent">&lt; 
                     
-                    <a href="../../../Mustache.html">Mustache</a>
+                    Mustache
                     
                 </span>
             
@@ -58,7 +58,7 @@ rendered by <a href="View.html">View</a> is used for the panel itself.
         <dd>
             <ul>
                 
-                <li><a href="#M000058">times</a></li>
+                <li><a href="#M000048">times</a></li>
                 
             </ul>
         </dd>
@@ -67,7 +67,7 @@ rendered by <a href="View.html">View</a> is used for the panel itself.
         <dd>
             <ul>
                 
-                <li><a href="#M000059">variables</a></li>
+                <li><a href="#M000049">variables</a></li>
                 
             </ul>
         </dd>
@@ -89,16 +89,15 @@ rendered by <a href="View.html">View</a> is used for the panel itself.
             <div class="sectiontitle">Instance Public methods</div>
             
             <div class="method">
-                <div class="title" id="M000058">
+                <div class="title" id="M000048">
                     
-                    <a name="M000058"></a><b>times</b>()
+                    <a name="M000048"></a><b>times</b>()
                     
                 </div>
                 
                 <div class="description">
                   <p>
-We track the render times of all the <a
-href="../../../Mustache.html">Mustache</a> views on this page load.
+We track the render times of all the Mustache views on this page load.
 </p>
 
                 </div>
@@ -108,12 +107,12 @@ href="../../../Mustache.html">Mustache</a> views on this page load.
                 
                 <div class="sourcecode">
                     <p class="source-link">
-                        Source: <a href="javascript:toggleSource('M000058_source')" id="l_M000058_source">show</a>
+                        Source: <a href="javascript:toggleSource('M000048_source')" id="l_M000048_source">show</a>
                         
-                        | <a href="http://github.com/defunkt/mustache/blob/6b5adad23483f646181caeb9777c8e22bf65ec66/lib/rack/bug/panels/mustache_panel.rb#L22" target="_blank" class="github_url">on GitHub</a>
+                        | <a href="http://github.com/wvl/balbo/blob/6b5adad23483f646181caeb9777c8e22bf65ec66/lib/rack/bug/panels/mustache_panel.rb#L22" target="_blank" class="github_url">on GitHub</a>
                         
                     </p>
-                    <div id="M000058_source" class="dyn-source">
+                    <div id="M000048_source" class="dyn-source">
                         <pre><span class="ruby-comment cmt"># File lib/rack/bug/panels/mustache_panel.rb, line 22</span>
         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">times</span>
           <span class="ruby-constant">MustachePanel</span>.<span class="ruby-identifier">times</span>.<span class="ruby-identifier">map</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">value</span><span class="ruby-operator">|</span>
@@ -126,9 +125,9 @@ href="../../../Mustache.html">Mustache</a> views on this page load.
             </div>
             
             <div class="method">
-                <div class="title" id="M000059">
+                <div class="title" id="M000049">
                     
-                    <a name="M000059"></a><b>variables</b>()
+                    <a name="M000049"></a><b>variables</b>()
                     
                 </div>
                 
@@ -144,12 +143,12 @@ Any variables used in this page load are collected and displayed.
                 
                 <div class="sourcecode">
                     <p class="source-link">
-                        Source: <a href="javascript:toggleSource('M000059_source')" id="l_M000059_source">show</a>
+                        Source: <a href="javascript:toggleSource('M000049_source')" id="l_M000049_source">show</a>
                         
-                        | <a href="http://github.com/defunkt/mustache/blob/6b5adad23483f646181caeb9777c8e22bf65ec66/lib/rack/bug/panels/mustache_panel.rb#L29" target="_blank" class="github_url">on GitHub</a>
+                        | <a href="http://github.com/wvl/balbo/blob/6b5adad23483f646181caeb9777c8e22bf65ec66/lib/rack/bug/panels/mustache_panel.rb#L29" target="_blank" class="github_url">on GitHub</a>
                         
                     </p>
-                    <div id="M000059_source" class="dyn-source">
+                    <div id="M000049_source" class="dyn-source">
                         <pre><span class="ruby-comment cmt"># File lib/rack/bug/panels/mustache_panel.rb, line 29</span>
         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">variables</span>
           <span class="ruby-identifier">vars</span> = <span class="ruby-constant">MustachePanel</span>.<span class="ruby-identifier">variables</span>.<span class="ruby-identifier">sort_by</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">_</span><span class="ruby-operator">|</span> <span class="ruby-identifier">key</span>.<span class="ruby-identifier">to_s</span> }
