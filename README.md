@@ -16,7 +16,7 @@ I'm with defunkt when he says:
 > in my HTML, or putting JavaScript in my HTML.
 
 I thought Mustache was quite interesting when I saw it. However, I have to 
-ammend the quote above, and say that "I'm not sure that I like writing mustache" either.
+amend the quote above, and say that "I'm not sure that I like writing mustache" either.
 
 Some of the things I did not like about Mustache were:
 
