@@ -44,6 +44,7 @@ desc "Push a new version to Gemcutter"
 task :publish => [ :test, :gemspec, :build ] do
   system "git tag v#{Balbo::Version}"
   system "git push origin v#{Balbo::Version}"
+  system "git push origin master"
   system "gem push pkg/mustache-#{Balbo::Version}.gem"
   system "git clean -fd"
   exec "rake pages"
