@@ -16,4 +16,8 @@ describe "Context" do
     Balbo.raise_on_context_miss = false
   end
   
+  it "should allow lookup via symbols" do
+    Balbo::Context.new({:test=>"pass"}).resolve('test').should == "pass"
+  end
+  
 end

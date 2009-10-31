@@ -56,6 +56,8 @@ module Balbo
           return hash[name]
         elsif hash.respond_to?(:has_key?) && hash.has_key?(name.to_s)
           return hash[name.to_s]
+        elsif hash.respond_to?(:has_key?) && hash.has_key?(name.to_sym)
+          return hash[name.to_sym]
         elsif hash.respond_to?(name)
           return hash.send(name)
         end
