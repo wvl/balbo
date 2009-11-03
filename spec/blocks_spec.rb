@@ -10,4 +10,9 @@ describe "loop" do
     t("{loop}{{name}}{/loop}").render( \
       [{'name'=>'1'},{'name'=>'2'}]).should == "12"
   end
+  
+  it "should allow looping with a named variable" do
+    t("{loop links as link}{{link}}{/loop}").render( \
+      {'links'=>['1','2']}).should == "12"
+  end
 end

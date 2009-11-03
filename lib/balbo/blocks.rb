@@ -54,9 +54,13 @@ module Balbo
   #    {loop iterable}
   #    {/loop}
   #
+  #    {loop iterable as item}
+  #    {/loop}
   class Loop
     def initialize(data, template)
-      @var = data
+      data =~ /([\w]*)(\sas\s(.*))?/
+      @var = $1
+      @as = $3
       @nodes = template.compile { |token, data| token == :endloop }
     end
     
@@ -72,7 +76,7 @@ module Balbo
       result = ""
       if length > 0
         iterable.each do |item|
-          context.push(item)
+          context.push(@as ? {@as => item} : item)
           result << @nodes.render(context)
           context.pop
         end
